@@ -1278,6 +1278,179 @@
             'text': 'txt'
         };
 
+        // Toggle theme
+        function toggleTheme() {
+            isDarkTheme = !isDarkTheme;
+            document.documentElement.style.setProperty('--background-dark', isDarkTheme ? '#000000' : '#ffffff');
+            document.documentElement.style.setProperty('--surface-dark', isDarkTheme ? '#111111' : '#f5f5f5');
+            document.documentElement.style.setProperty('--text-primary', isDarkTheme ? '#ffffff' : '#000000');
+            document.documentElement.style.setProperty('--border-color', isDarkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.2)');
+            document.documentElement.style.setProperty('--icon-color', isDarkTheme ? '#ffffff' : '#000000');
+            document.getElementById('toggleTheme').innerHTML = `<i class="fas fa-${isDarkTheme ? 'sun' : 'moon'}"></i>`;
+        }
+
+        // Add CSS for light mode adjustments if not already present
+        if (!document.getElementById('themeStyles')) {
+            const style = document.createElement('style');
+            style.id = 'themeStyles';
+            style.textContent = `
+                .chat-container {
+                    border: 1px solid var(--border-color);
+                }
+                
+                .sidebar {
+                    border-right: 1px solid var(--border-color) !important;
+                }
+
+                .chat-item {
+                    border: 1px solid var(--border-color);
+                }
+
+                .chat-item:hover {
+                    border-color: var(--border-color);
+                }
+
+                .message-content {
+                    border: 1px solid var(--border-color) !important;
+                }
+
+                .sidebar-action-btn {
+                    border: 1px solid var(--border-color) !important;
+                    color: var(--icon-color) !important;
+                }
+
+                .custom-ai-item {
+                    border: 1px solid var(--border-color);
+                }
+
+                .custom-ai-item i,
+                .avatar i,
+                .welcome-icon i,
+                .command-icon i {
+                    color: var(--icon-color) !important;
+                }
+
+                .input-box {
+                    border: 1px solid var(--border-color) !important;
+                }
+
+                .input-box label {
+                    color: var(--icon-color) !important;
+                }
+
+                .command-palette {
+                    border: 1px solid var(--border-color) !important;
+                }
+
+                .command-input {
+                    border-bottom: 1px solid var(--border-color) !important;
+                }
+
+                .modal {
+                    border: 1px solid var(--border-color) !important;
+                }
+
+                .custom-ai-add {
+                    border: 1px solid var(--border-color) !important;
+                    color: var(--icon-color) !important;
+                }
+
+                .custom-ai-action {
+                    border: 1px solid var(--border-color) !important;
+                }
+
+                .code-block {
+                    border: 1px solid var(--border-color) !important;
+                }
+
+                .code-block-header {
+                    border-bottom: 1px solid var(--border-color) !important;
+                }
+
+                .code-action-button {
+                    border: 1px solid var(--border-color) !important;
+                    color: var(--icon-color) !important;
+                }
+
+                .action-button {
+                    border: 1px solid var(--border-color) !important;
+                    color: var(--icon-color) !important;
+                }
+
+                .chat-header {
+                    border-bottom: 1px solid var(--border-color) !important;
+                }
+
+                .header-ai-info {
+                    border: 1px solid var(--border-color);
+                }
+
+                .header-ai-info i {
+                    color: var(--icon-color) !important;
+                }
+
+                .welcome-feature {
+                    border: 1px solid var(--border-color) !important;
+                }
+
+                .example-message {
+                    border: 1px solid var(--border-color) !important;
+                }
+
+                .example-message i {
+                    color: var(--icon-color) !important;
+                }
+
+                .chat-item-icon {
+                    border: 1px solid var(--border-color);
+                }
+
+                .chat-item-icon i {
+                    color: var(--icon-color) !important;
+                }
+
+                .new-chat-btn {
+                    border: 1px solid var(--border-color);
+                }
+
+                .sidebar-toggle {
+                    border: 1px solid var(--border-color) !important;
+                    color: var(--icon-color) !important;
+                }
+
+                .image-preview {
+                    border: 1px solid var(--border-color);
+                }
+
+                pre {
+                    border: 1px solid var(--border-color) !important;
+                }
+
+                textarea, input[type="text"] {
+                    border: 1px solid var(--border-color) !important;
+                    color: var(--text-primary) !important;
+                }
+
+                .modal-button-secondary {
+                    border: 1px solid var(--border-color) !important;
+                    color: var(--text-primary) !important;
+                }
+                .chat-item-title, .chat-item-preview {
+                    color: var(--text-primary) !important;
+                }
+
+                .custom-ai-item-name {
+                    color: var(--text-primary) !important;
+                }
+
+                .command-title, .command-description {
+                    color: var(--text-primary) !important;
+                }
+            `;
+            document.head.appendChild(style);
+        }
+
+        
         function showNotification(message, duration = 2000) {
             const notification = document.getElementById('notification');
             notification.textContent = message;
@@ -1893,6 +2066,7 @@
             if (emptyChat) {
                 currentChatId = emptyChat.id;
                 chatHistory = [];
+                // Reset to default AI settings
                 SYSTEM_INSTRUCTIONS = DEFAULT_SYSTEM_INSTRUCTIONS;
                 updateCustomAIInfo();
                 displayChatHistory();
@@ -1907,11 +2081,12 @@
                 title: 'New Chat',
                 messages: [],
                 createdAt: new Date().toISOString(),
-                systemInstructions: DEFAULT_SYSTEM_INSTRUCTIONS
+                systemInstructions: DEFAULT_SYSTEM_INSTRUCTIONS  // Always use default instructions for new chats
             };
             chats.unshift(chat);
             currentChatId = chatId;
             chatHistory = [];
+            // Reset to default AI settings
             SYSTEM_INSTRUCTIONS = DEFAULT_SYSTEM_INSTRUCTIONS;
             saveChats();
             updateCustomAIInfo();
@@ -1990,15 +2165,6 @@
             }
         }
 
-        // Toggle theme
-        function toggleTheme() {
-            isDarkTheme = !isDarkTheme;
-            document.documentElement.style.setProperty('--background-dark', isDarkTheme ? '#000000' : '#ffffff');
-            document.documentElement.style.setProperty('--surface-dark', isDarkTheme ? '#111111' : '#f5f5f5');
-            document.documentElement.style.setProperty('--text-primary', isDarkTheme ? '#ffffff' : '#000000');
-            document.getElementById('toggleTheme').innerHTML = `<i class="fas fa-${isDarkTheme ? 'sun' : 'moon'}"></i>`;
-        }
-
         // Toggle sidebar
         function toggleSidebar() {
             document.querySelector('.sidebar').classList.toggle('sidebar-collapsed');
@@ -2044,6 +2210,10 @@
                         const chatIndex = chats.findIndex(c => c.id === currentChatId);
                         if (chatIndex !== -1) {
                             chats[chatIndex].messages = [];
+                            chats[chatIndex].title = 'New Chat';
+                            chats[chatIndex].systemInstructions = DEFAULT_SYSTEM_INSTRUCTIONS; // Reset to default instructions
+                            SYSTEM_INSTRUCTIONS = DEFAULT_SYSTEM_INSTRUCTIONS;
+                            updateCustomAIInfo();
                             updateChatListAndUI();
                         }
                         document.getElementById('currentChatTitle').textContent = 'New Chat';
@@ -2060,14 +2230,29 @@
                 'Clear',
                 'Cancel',
                 () => {
-                    chatHistory = [];
-                    if (currentChatId) {
-                        const chatIndex = chats.findIndex(c => c.id === currentChatId);
-                        if (chatIndex !== -1) {
-                            chats.splice(chatIndex, 1);
-                            updateChatListAndUI();
-                            loadChat(chats[0].id); // Load the first available chat
+                    // Remove the current chat
+                    const chatIndex = chats.findIndex(c => c.id === currentChatId);
+                    if (chatIndex !== -1) {
+                        chats.splice(chatIndex, 1);
+                        
+                        // Find the next available chat to load
+                        if (chats.length > 0) {
+                            // Try to load the chat that's now at the same index
+                            // If not available, load the last chat
+                            const nextChatIndex = Math.min(chatIndex, chats.length - 1);
+                            currentChatId = chats[nextChatIndex].id;
+                            chatHistory = [...chats[nextChatIndex].messages];
+                            SYSTEM_INSTRUCTIONS = chats[nextChatIndex].systemInstructions || DEFAULT_SYSTEM_INSTRUCTIONS;
+                            document.getElementById('currentChatTitle').textContent = chats[nextChatIndex].title;
+                        } else {
+                            // If no chats left, create a new one with default settings
+                            createNewChat();
                         }
+                        
+                        updateCustomAIInfo();
+                        saveChats();
+                        renderChatList();
+                        displayChatHistory();
                     }
                 }
             );
@@ -2090,10 +2275,27 @@
             input.value = '';
             input.focus();
             renderCommands();
+
+            // Add click event listener to document
+            document.addEventListener('click', handleClickOutside);
         }
 
         function hideCommandPalette() {
-            document.getElementById('commandPalette').classList.remove('active');
+            const palette = document.getElementById('commandPalette');
+            palette.classList.remove('active');
+            // Remove click event listener from document
+            document.removeEventListener('click', handleClickOutside);
+        }
+
+        // Function to handle clicks outside the command palette
+        function handleClickOutside(event) {
+            const palette = document.getElementById('commandPalette');
+            const openCommandsBtn = document.getElementById('openCommands');
+            
+            // Check if the click is outside both the palette and the open commands button
+            if (!palette.contains(event.target) && !openCommandsBtn.contains(event.target)) {
+                hideCommandPalette();
+            }
         }
 
         function renderCommands(filter = '') {
@@ -2232,12 +2434,56 @@
         function updateGeneratingState(generating) {
             isGenerating = generating;
             document.getElementById('stopGenerate').classList.toggle('visible', generating);
+            
+            // Disable chat items
             document.querySelectorAll('.chat-item').forEach(item => {
                 if (item.getAttribute('data-chat-id') !== currentChatId) {
                     item.classList.toggle('disabled', generating);
                 }
             });
+            
+            // Disable new chat button
             document.querySelector('.new-chat-btn').classList.toggle('disabled', generating);
+            
+            // Disable header action buttons except theme toggle and sidebar
+            document.querySelectorAll('.header-actions .sidebar-action-btn').forEach(btn => {
+                if (!btn.id.includes('toggleTheme') && !btn.id.includes('toggleSidebar')) {
+                    btn.classList.toggle('disabled', generating);
+                    btn.style.pointerEvents = generating ? 'none' : 'auto';
+                }
+            });
+            
+            // Disable custom AI section
+            document.querySelectorAll('.custom-ai-item, .custom-ai-add').forEach(element => {
+                element.classList.toggle('disabled', generating);
+                element.style.pointerEvents = generating ? 'none' : 'auto';
+            });
+            
+            // Disable clear chat functionality
+            const clearChatBtn = document.getElementById('clearChat');
+            if (clearChatBtn) {
+                clearChatBtn.classList.toggle('disabled', generating);
+                clearChatBtn.style.pointerEvents = generating ? 'none' : 'auto';
+            }
+            
+            // Add CSS for disabled state if not already present
+            if (!document.getElementById('disabledStyles')) {
+                const style = document.createElement('style');
+                style.id = 'disabledStyles';
+                style.textContent = `
+                    .disabled {
+                        opacity: 0.5;
+                        cursor: not-allowed !important;
+                    }
+                    .sidebar-action-btn.disabled,
+                    .custom-ai-item.disabled,
+                    .custom-ai-add.disabled {
+                        opacity: 0.5;
+                        pointer-events: none;
+                    }
+                `;
+                document.head.appendChild(style);
+            }
         }
 
         // Stop generation
@@ -2430,21 +2676,16 @@
             displayChatHistory();
             document.getElementById('currentChatTitle').textContent = `Chat with ${ai.name}`;
 
-            // Add welcome message for Gem Int
-            const welcomeDiv = document.createElement('div');
-            welcomeDiv.className = 'welcome-container';
-            welcomeDiv.innerHTML = `
-                <i class="fa-solid fa-hexagon-nodes welcome-icon"></i>
-                <div class="welcome-title">Chat with ${ai.name}</div>
-                <div class="welcome-feature">
-                    <i class="fas fa-microchip"></i>
-                    <div class="welcome-feature-text">
-                        Gem Int personality with specific instructions and behavior
+            // Add simplified welcome message for custom AI
+            const chatHistoryDiv = document.getElementById('chatHistory');
+            chatHistoryDiv.innerHTML = `
+                <div class="welcome-container">
+                    <div class="welcome-content">
+                        <div class="welcome-title">Chat with ${ai.name}</div>
+                        <div class="welcome-footer">Start typing below to begin your conversation</div>
                     </div>
                 </div>
-                <div class="welcome-footer">Start typing below to begin your conversation</div>
             `;
-            document.getElementById('chatHistory').appendChild(welcomeDiv);
         }
 
         function editCustomAI(index) {
