@@ -1952,55 +1952,95 @@
         // Example messages by category
         const exampleMessages = {
             coding: [
-                { icon: 'code', text: 'Create a React component for a dynamic form with validation' },
-                { icon: 'code', text: 'Help me understand recursion with practical examples' },
-                { icon: 'code', text: 'Write a Python script to automate file organization' },
-                { icon: 'code', text: 'Explain the difference between promises and async/await' },
-                { icon: 'code', text: 'Create a REST API using Node.js and Express' },
-                { icon: 'code', text: 'Help me implement a binary search tree in Java' },
-                { icon: 'code', text: 'Write a script to scrape web data using Python' },
-                { icon: 'code', text: 'Create a responsive navigation menu with HTML and CSS' },
-                { icon: 'code', text: 'Implement a caching system in Python' },
-                { icon: 'code', text: 'Build a real-time chat application using WebSocket' }
+                { icon: 'code', text: 'Create a React form', textToSend: 'Create a React component for a dynamic form with validation' },
+                { icon: 'code', text: 'Understand recursion', textToSend: 'Help me understand recursion with practical examples' },
+                { icon: 'code', text: 'Python file script', textToSend: 'Write a Python script to automate file organization' },
+                { icon: 'code', text: 'Promises vs Async', textToSend: 'Explain the difference between promises and async/await' },
+                { icon: 'code', text: 'Create a REST API', textToSend: 'Create a REST API using Node.js and Express' },
+                { icon: 'code', text: 'Binary search tree', textToSend: 'Help me implement a binary search tree in Java' },
+                { icon: 'code', text: 'Web scrape python', textToSend: 'Write a script to scrape web data using Python' },
+                { icon: 'code', text: 'Responsive Menu HTML', textToSend: 'Create a responsive navigation menu with HTML and CSS' },
+                { icon: 'code', text: 'Caching system', textToSend: 'Implement a caching system in Python' },
+                { icon: 'code', text: 'Real time chat app', textToSend: 'Build a real-time chat application using WebSocket' },
+                { icon: 'code', text: 'Sorting algorithim', textToSend: 'How to Implement a Bubble Sorting' },
+                { icon: 'code', text: 'Reverse the strings', textToSend: 'Write some string reverse function' },
+                { icon: 'code', text: 'Implement a class', textToSend: 'How can I make classes in javascript' },
+                { icon: 'code', text: 'Build a backend', textToSend: 'Give an idea of creating backend server' },
+                { icon: 'code', text: 'Create a frontend', textToSend: 'How can I start creating some frontend web' },
+                { icon: 'code', text: 'Database query', textToSend: 'Write a database query for this schema' },
+                { icon: 'code', text: 'Handle form data', textToSend: 'How can i handle forms data in javascript' },
+                { icon: 'code', text: 'Data structure', textToSend: 'Explain some data structure' },
+                { icon: 'code', text: 'Design a template', textToSend: 'How can i design a web template' },
+                { icon: 'code', text: 'Security practices', textToSend: 'What are some javascript security practices' },
             ],
             learning: [
-                { icon: 'graduation-cap', text: 'Explain machine learning concepts for beginners' },
-                { icon: 'graduation-cap', text: 'Help me understand database indexing' },
-                { icon: 'graduation-cap', text: 'Teach me about software design patterns' },
-                { icon: 'graduation-cap', text: 'Explain how blockchain technology works' },
-                { icon: 'graduation-cap', text: 'Guide me through cloud computing basics' },
-                { icon: 'graduation-cap', text: 'Help me understand Big O notation' },
-                { icon: 'graduation-cap', text: 'Explain microservices architecture' },
-                { icon: 'graduation-cap', text: 'Teach me about cybersecurity fundamentals' },
-                { icon: 'graduation-cap', text: 'Help me learn about artificial neural networks' },
-                { icon: 'graduation-cap', text: 'Explain containerization and Docker' }
+                { icon: 'graduation-cap', text: 'Machine learning basics', textToSend: 'Explain machine learning concepts for beginners' },
+                { icon: 'graduation-cap', text: 'Database indexing', textToSend: 'Help me understand database indexing' },
+                { icon: 'graduation-cap', text: 'Software design pattern', textToSend: 'Teach me about software design patterns' },
+                { icon: 'graduation-cap', text: 'Blockchain explained', textToSend: 'Explain how blockchain technology works' },
+                { icon: 'graduation-cap', text: 'Cloud basics', textToSend: 'Guide me through cloud computing basics' },
+                { icon: 'graduation-cap', text: 'Big O notation', textToSend: 'Help me understand Big O notation' },
+                { icon: 'graduation-cap', text: 'Microservices intro', textToSend: 'Explain microservices architecture' },
+                { icon: 'graduation-cap', text: 'Cybersecurity basics', textToSend: 'Teach me about cybersecurity fundamentals' },
+                { icon: 'graduation-cap', text: 'Neural network intro', textToSend: 'Help me learn about artificial neural networks' },
+                { icon: 'graduation-cap', text: 'Docker explained', textToSend: 'Explain containerization and Docker' },
+                { icon: 'graduation-cap', text: 'Operating systems', textToSend: 'How operating systems works' },
+                { icon: 'graduation-cap', text: 'Network protocols', textToSend: 'Explain some common network protocols' },
+                { icon: 'graduation-cap', text: 'Agile methodology', textToSend: 'What is agile methdology' },
+                { icon: 'graduation-cap', text: 'Types of testing', textToSend: 'Explain types of software testing' },
+                { icon: 'graduation-cap', text: 'Version control', textToSend: 'How version control works' },
+                { icon: 'graduation-cap', text: 'Data mining', textToSend: 'What data mining actually means' },
+                { icon: 'graduation-cap', text: 'Artificial intelligence', textToSend: 'What is artificial intelligence' },
+                { icon: 'graduation-cap', text: 'Robotics principles', textToSend: 'What are principles of robotics' },
+                { icon: 'graduation-cap', text: 'UI/UX design', textToSend: 'Explain UI/UX principles' },
+                { icon: 'graduation-cap', text: 'Statistical analysis', textToSend: 'What is statistical analysis used for' },
             ],
             projects: [
-                { icon: 'laptop-code', text: 'Help me build a personal portfolio website' },
-                { icon: 'laptop-code', text: 'Create a todo app with local storage' },
-                { icon: 'laptop-code', text: 'Build a weather application using an API' },
-                { icon: 'laptop-code', text: 'Create a markdown note-taking app' },
-                { icon: 'laptop-code', text: 'Build a URL shortener service' },
-                { icon: 'laptop-code', text: 'Create a file sharing application' },
-                { icon: 'laptop-code', text: 'Build a social media dashboard' },
-                { icon: 'laptop-code', text: 'Create an e-commerce shopping cart' },
-                { icon: 'laptop-code', text: 'Build a real-time collaboration tool' },
-                { icon: 'laptop-code', text: 'Create a password manager application' }
+                { icon: 'laptop-code', text: 'Portfolio website', textToSend: 'Help me build a personal portfolio website' },
+                { icon: 'laptop-code', text: 'Todo app setup', textToSend: 'Create a todo app with local storage' },
+                { icon: 'laptop-code', text: 'Weather API app', textToSend: 'Build a weather application using an API' },
+                { icon: 'laptop-code', text: 'Markdown note app', textToSend: 'Create a markdown note-taking app' },
+                { icon: 'laptop-code', text: 'URL shortener idea', textToSend: 'Build a URL shortener service' },
+                { icon: 'laptop-code', text: 'File sharing app', textToSend: 'Create a file sharing application' },
+                { icon: 'laptop-code', text: 'Social dashboard', textToSend: 'Build a social media dashboard' },
+                { icon: 'laptop-code', text: 'E-commerce cart', textToSend: 'Create an e-commerce shopping cart' },
+                { icon: 'laptop-code', text: 'Real-time collab', textToSend: 'Build a real-time collaboration tool' },
+                { icon: 'laptop-code', text: 'Password manager', textToSend: 'Create a password manager application' },
+                { icon: 'laptop-code', text: 'Image editor app', textToSend: 'Design a image editor application' },
+                { icon: 'laptop-code', text: 'Music player app', textToSend: 'Build a web music player' },
+                { icon: 'laptop-code', text: 'Chatbot design', textToSend: 'Design a conversational chatbot application' },
+                { icon: 'laptop-code', text: 'Personal blog website', textToSend: 'How can I create a personal blog' },
+                { icon: 'laptop-code', text: 'Book library system', textToSend: 'Design a simple book library system' },
+                { icon: 'laptop-code', text: 'Calorie tracker app', textToSend: 'Create a calorie tracker application' },
+                { icon: 'laptop-code', text: 'Task management tool', textToSend: 'Create a task management application' },
+                { icon: 'laptop-code', text: 'E-learning app', textToSend: 'Design a e-learning web application' },
+                { icon: 'laptop-code', text: 'Recipe app', textToSend: 'How to create a recipe web app' },
+                { icon: 'laptop-code', text: 'Event planning app', textToSend: 'Design a event planning tool' },
             ],
             problemSolving: [
-                { icon: 'brain', text: 'Help me optimize my database queries' },
-                { icon: 'brain', text: 'Debug my authentication system' },
-                { icon: 'brain', text: 'Improve my API response times' },
-                { icon: 'brain', text: 'Fix memory leaks in my application' },
-                { icon: 'brain', text: 'Optimize my React component rendering' },
-                { icon: 'brain', text: 'Troubleshoot my Docker container issues' },
-                { icon: 'brain', text: 'Help me scale my web application' },
-                { icon: 'brain', text: 'Debug my WebSocket connection issues' },
-                { icon: 'brain', text: 'Optimize my image processing pipeline' },
-                { icon: 'brain', text: 'Fix cross-browser compatibility issues' }
+                { icon: 'brain', text: 'Optimize queries', textToSend: 'Help me optimize my database queries' },
+                { icon: 'brain', text: 'Debug auth system', textToSend: 'Debug my authentication system' },
+                { icon: 'brain', text: 'Improve API times', textToSend: 'Improve my API response times' },
+                { icon: 'brain', text: 'Fix memory leak', textToSend: 'Fix memory leaks in my application' },
+                { icon: 'brain', text: 'Optimize render', textToSend: 'Optimize my React component rendering' },
+                { icon: 'brain', text: 'Troubleshoot docker', textToSend: 'Troubleshoot my Docker container issues' },
+                { icon: 'brain', text: 'Scale web app', textToSend: 'Help me scale my web application' },
+                { icon: 'brain', text: 'Debug WebSocket', textToSend: 'Debug my WebSocket connection issues' },
+                { icon: 'brain', text: 'Image processing', textToSend: 'Optimize my image processing pipeline' },
+                { icon: 'brain', text: 'Fix cross-browser', textToSend: 'Fix cross-browser compatibility issues' },
+                { icon: 'brain', text: 'Solve a bug', textToSend: 'Help me solve this bug i cant understand' },
+                { icon: 'brain', text: 'Algorithim issue', textToSend: 'Help me fix an algorithim problem' },
+                { icon: 'brain', text: 'Memory issue', textToSend: 'How can I solve memory issue' },
+                { icon: 'brain', text: 'Network problem', textToSend: 'How can i solve this network problem' },
+                { icon: 'brain', text: 'Performance issues', textToSend: 'Help me in performance improvements' },
+                { icon: 'brain', text: 'Security issue', textToSend: 'How can i solve this security issue' },
+                { icon: 'brain', text: 'User experience', textToSend: 'Help me in improve user experience' },
+                { icon: 'brain', text: 'Database design', textToSend: 'How to fix the database design' },
+                { icon: 'brain', text: 'Testing issue', textToSend: 'Why my tests are failing' },
+                { icon: 'brain', text: 'Code refactoring', textToSend: 'Help me refactor my code' },
             ]
         };
-
+    
         function getRandomExample(category) {
             const examples = exampleMessages[category];
             return examples[Math.floor(Math.random() * examples.length)];
@@ -2011,8 +2051,7 @@
             const codingExample = getRandomExample('coding');
             const learningExample = getRandomExample('learning');
             const projectsExample = getRandomExample('projects');
-            const problemSolvingExample = getRandomExample('problemSolving');
-
+            const problemSolvingExample = getRandomExample('problemSolving');       
             return `
                 <div class="welcome-content">
                     <i class="fa-solid fa-hexagon-nodes welcome-icon"></i>
@@ -2033,19 +2072,19 @@
                         </div>
                     </div>
                     <div class="example-messages">
-                        <button class="example-message" onclick="useExampleMessage('${codingExample.text}')">
+                        <button class="example-message" onclick="useExampleMessage('${codingExample.textToSend}')">
                             <i class="fas fa-${codingExample.icon}"></i>
                             ${codingExample.text}
                         </button>
-                        <button class="example-message" onclick="useExampleMessage('${learningExample.text}')">
+                        <button class="example-message" onclick="useExampleMessage('${learningExample.textToSend}')">
                             <i class="fas fa-${learningExample.icon}"></i>
                             ${learningExample.text}
                         </button>
-                        <button class="example-message" onclick="useExampleMessage('${projectsExample.text}')">
+                        <button class="example-message" onclick="useExampleMessage('${projectsExample.textToSend}')">
                             <i class="fas fa-${projectsExample.icon}"></i>
                             ${projectsExample.text}
                         </button>
-                        <button class="example-message" onclick="useExampleMessage('${problemSolvingExample.text}')">
+                        <button class="example-message" onclick="useExampleMessage('${problemSolvingExample.textToSend}')">
                             <i class="fas fa-${problemSolvingExample.icon}"></i>
                             ${problemSolvingExample.text}
                         </button>
