@@ -64,6 +64,8 @@
             flex-direction: column;
             transition: width 0.3s ease;
             position: relative;
+            height: 100vh;
+            overflow: hidden;
         }
 
         .sidebar-collapsed {
@@ -166,6 +168,7 @@
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
+            min-height: 0; /* Add this to ensure proper flexbox behavior */
         }
 
         .chat-item {
@@ -653,6 +656,37 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .send-button:disabled {
+            background: rgba(255, 255, 255, 0.1);
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        .api-indicator {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            border-image: var(--google-gradient);
+            border-image-slice: 1;
+            animation: spin 1s linear infinite;
+            display: none;
+        }
+
+        .api-indicator.active {
+            display: block;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         pre {
@@ -808,13 +842,18 @@
         .custom-ai-section {
             padding: 1rem;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            max-height: 30vh; /* Limit the height to 30% of viewport height */
+            min-height: 0; /* Add this to ensure proper flexbox behavior */
         }
 
         .custom-ai-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 0.75rem;
+            padding-bottom: 0.5rem;
+            flex-shrink: 0; /* Prevent header from shrinking */
         }
 
         .custom-ai-title {
@@ -845,6 +884,25 @@
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
+            overflow-y: auto; /* Make the list scrollable */
+            padding-right: 0.5rem; /* Add padding for scrollbar */
+            margin-top: 0.5rem;
+            flex: 1; /* Allow the list to take remaining space */
+            min-height: 0; /* Add this to ensure proper flexbox behavior */
+        }
+
+        /* Update scrollbar styles for custom AI list */
+        .custom-ai-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .custom-ai-list::-webkit-scrollbar-track {
+            background: var(--surface-dark);
+        }
+
+        .custom-ai-list::-webkit-scrollbar-thumb {
+            background: var(--google-gradient);
+            border-radius: 3px;
         }
 
         .custom-ai-item {
@@ -1089,11 +1147,13 @@
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.2s ease;
-            text-align: left;
+            text-align: center;
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 0.75rem;
             color: var(--text-primary);
+            position: relative;
         }
 
         .example-message:hover {
@@ -1104,6 +1164,189 @@
         .example-message i {
             font-size: 1rem;
             opacity: 0.7;
+            position: absolute;
+            left: 1rem;
+        }
+
+        .example-message span {
+            flex: 1;
+            text-align: center;
+        }
+
+        .example-message:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .example-message i {
+            font-size: 1rem;
+            opacity: 0.7;
+            position: absolute;
+            left: 1rem;
+        }
+
+        .example-message span {
+            flex: 1;
+            text-align: center;
+        }
+
+        .format-buttons {
+            display: flex;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .format-button {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .format-button:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .shortcuts-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .shortcut-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+        }
+
+        .shortcut-key {
+            background: var(--google-gradient);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.875rem;
+        }
+
+        .shortcut-description {
+            color: var(--text-primary);
+            opacity: 0.8;
+        }
+
+        .message-preview {
+            padding: 0.75rem;
+            margin-top: 0.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            display: none;
+        }
+
+        .message-preview.active {
+            display: block;
+        }
+
+        .preview-title {
+            font-size: 0.875rem;
+            color: var(--text-primary);
+            opacity: 0.7;
+            margin-bottom: 0.5rem;
+        }
+
+        .preview-content {
+            color: var(--text-primary);
+        }
+
+        /* Accessibility improvements */
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
+        }
+
+        /* High contrast focus indicators */
+        button:focus-visible,
+        input:focus-visible,
+        textarea:focus-visible {
+            outline: 2px solid #fff;
+            outline-offset: 2px;
+        }
+
+        /* Skip to main content link */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--google-gradient);
+            color: white;
+            padding: 8px;
+            z-index: 100;
+            transition: top 0.2s;
+        }
+
+        .skip-link:focus {
+            top: 0;
+        }
+
+        /* Improved button focus states */
+        .sidebar-action-btn:focus-visible,
+        .format-button:focus-visible,
+        .custom-ai-action:focus-visible {
+            outline: 2px solid #fff;
+            outline-offset: 2px;
+        }
+
+        /* Drag and drop styles */
+        .drag-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            backdrop-filter: blur(4px);
+        }
+
+        .drag-overlay.active {
+            display: flex;
+        }
+
+        .drag-message {
+            padding: 2rem;
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            color: white;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .drag-message i {
+            font-size: 2rem;
+            background: var(--google-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
     </style>
 </head>
@@ -1191,7 +1434,7 @@
                         placeholder="Ask anything... (Ctrl+Enter to send)" 
                         rows="1"
                     ></textarea>
-                    <button onclick="generateContent()" class="send-button" title="Send message (Ctrl+Enter)">
+                    <button onclick="generateContent()" class="send-button" title="Send message (Ctrl+Enter)" disabled>
                         <i class="fas fa-paper-plane"></i>
                     </button>
                 </div>
@@ -1725,7 +1968,14 @@
             const promptInput = document.getElementById('prompt');
             const prompt = promptInput.value.trim();
             
-            if (!isRegeneration && !prompt && uploadedImages.length === 0) return;
+            // Check if input is valid before proceeding
+            if (!isRegeneration && (!prompt || (uploadedImages.length > 0 && !prompt))) return;
+            
+            // Show API indicator
+            const sendButton = document.querySelector('.send-button');
+            const apiIndicator = document.createElement('div');
+            apiIndicator.className = 'api-indicator active';
+            sendButton.appendChild(apiIndicator);
             
             // Remove any other empty chats before starting generation
             if (!isRegeneration) {
@@ -1750,8 +2000,9 @@
                     timestamp: new Date().toISOString()
                 });
                 
-                // Clear image preview only for new messages, not regeneration
+                // Clear image preview and reset file input for new messages
                 document.getElementById('imagePreview').innerHTML = '';
+                document.getElementById('imageInput').value = '';
                 uploadedImages = [];
             }
             
@@ -1772,14 +2023,12 @@
                         generationConfig: {
                             temperature: 0.4
                         },
-                        safetySettings: [
-                                { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
-                                { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
-                                { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
-                                { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
-                            ]
-                        })
+                        safetySettings: [],
+                    })
                 });
+
+                // Remove API indicator once we get a response
+                apiIndicator.remove();
 
                 const reader = response.body.getReader();
                 currentReader = reader;
@@ -1869,12 +2118,26 @@
             });
         }
 
+        // Remove the old image input handler and use only the unified one
         document.getElementById('imageInput').addEventListener('change', async function(event) {
+            if (event.target.files.length > 0) {
+                await handleImageFiles(Array.from(event.target.files));
+                this.value = ''; // Reset input after handling
+            }
+        });
+
+        // Unified image handling function
+        async function handleImageFiles(files) {
             const imagePreview = document.getElementById('imagePreview');
-            const files = Array.from(event.target.files);
             
             for (const file of files) {
                 try {
+                    // Check if file is an image
+                    if (!file.type.startsWith('image/')) {
+                        showNotification('Only image files are allowed');
+                        continue;
+                    }
+
                     const base64Data = await fileToBase64(file);
                     const imageData = {
                         inline_data: {
@@ -1890,30 +2153,47 @@
                     const img = document.createElement('img');
                     img.src = URL.createObjectURL(file);
                     img.className = 'w-15 h-15 object-cover rounded';
+                    img.alt = `Uploaded image ${uploadedImages.length}`; // Accessibility
                     
                     const removeBtn = document.createElement('div');
                     removeBtn.className = 'remove-image';
                     removeBtn.innerHTML = '<i class="fas fa-times"></i>';
+                    removeBtn.setAttribute('aria-label', 'Remove image'); // Accessibility
                     removeBtn.onclick = function() {
                         const index = uploadedImages.indexOf(imageData);
                         if (index > -1) {
                             uploadedImages.splice(index, 1);
                         }
                         imagePreview.removeChild(previewItem);
+                        document.getElementById('imageInput').value = '';
+                        updateSendButtonState();
                     };
                     
                     previewItem.appendChild(img);
                     previewItem.appendChild(removeBtn);
                     imagePreview.appendChild(previewItem);
+                    updateSendButtonState();
                 } catch (error) {
                     console.error('Error processing image:', error);
+                    showNotification('Error processing image');
                 }
             }
-        });
+        }
+
+        function updateSendButtonState() {
+            const promptInput = document.getElementById('prompt');
+            const sendButton = document.querySelector('.send-button');
+            const hasText = promptInput.value.trim().length > 0;
+            const hasImages = uploadedImages.length > 0;
+            
+            // Enable button only if there's text input when images are present
+            sendButton.disabled = hasImages ? !hasText : !hasText;
+        }
 
         document.getElementById('prompt').addEventListener('input', function() {
             this.style.height = 'auto';
             this.style.height = Math.min(this.scrollHeight, 150) + 'px';
+            updateSendButtonState();
         });
 
         document.getElementById('prompt').addEventListener('keydown', function(e) {
@@ -1957,95 +2237,143 @@
         // Example messages by category
         const exampleMessages = {
             coding: [
-                { icon: 'code', text: 'Create a React form', textToSend: 'Create a React component for a dynamic form with validation' },
-                { icon: 'code', text: 'Understand recursion', textToSend: 'Help me understand recursion with practical examples' },
-                { icon: 'code', text: 'Python file script', textToSend: 'Write a Python script to automate file organization' },
-                { icon: 'code', text: 'Promises vs Async', textToSend: 'Explain the difference between promises and async/await' },
-                { icon: 'code', text: 'Create a REST API', textToSend: 'Create a REST API using Node.js and Express' },
-                { icon: 'code', text: 'Binary search tree', textToSend: 'Help me implement a binary search tree in Java' },
-                { icon: 'code', text: 'Web scrape python', textToSend: 'Write a script to scrape web data using Python' },
-                { icon: 'code', text: 'Responsive Menu HTML', textToSend: 'Create a responsive navigation menu with HTML and CSS' },
-                { icon: 'code', text: 'Caching system', textToSend: 'Implement a caching system in Python' },
-                { icon: 'code', text: 'Real time chat app', textToSend: 'Build a real-time chat application using WebSocket' },
-                { icon: 'code', text: 'Sorting algorithim', textToSend: 'How to Implement a Bubble Sorting' },
-                { icon: 'code', text: 'Reverse the strings', textToSend: 'Write some string reverse function' },
-                { icon: 'code', text: 'Implement a class', textToSend: 'How can I make classes in javascript' },
-                { icon: 'code', text: 'Build a backend', textToSend: 'Give an idea of creating backend server' },
-                { icon: 'code', text: 'Create a frontend', textToSend: 'How can I start creating some frontend web' },
-                { icon: 'code', text: 'Database query', textToSend: 'Write a database query for this schema' },
-                { icon: 'code', text: 'Handle form data', textToSend: 'How can i handle forms data in javascript' },
-                { icon: 'code', text: 'Data structure', textToSend: 'Explain some data structure' },
-                { icon: 'code', text: 'Design a template', textToSend: 'How can i design a web template' },
-                { icon: 'code', text: 'Security practices', textToSend: 'What are some javascript security practices' },
+                { 
+                    display: "Create a Discord Bot",
+                    text: "Create a Discord bot using discord.py in Python. Include 5 essential commands: !help (shows available commands), !ping (checks bot latency), !clear (clears messages), !kick (moderator command), and !ban (admin command). Add proper error handling, command cooldowns, and role-based permissions. Also include a basic setup guide."
+                },
+                { 
+                    display: "Build a Portfolio Website",
+                    text: "Help me create a modern portfolio website using HTML, CSS, and JavaScript. Include sections for About Me, Projects, Skills, and Contact. Make it responsive with animations, dark/light mode toggle, and a projects filter system. Add SEO optimization and performance best practices."
+                },
+                { 
+                    display: "Create a REST API",
+                    text: "Create a RESTful API using Node.js and Express with MongoDB as the database. Include user authentication with JWT, CRUD operations for posts/comments, input validation, error handling, rate limiting, and API documentation. Follow REST best practices and include security measures."
+                },
+                { 
+                    display: "Build a Todo App",
+                    text: "Create a full-stack todo application with React for frontend and Node.js for backend. Include features like task categories, due dates, priority levels, search/filter, and user authentication. Use MongoDB for storage and add real-time updates using WebSocket."
+                },
+                { 
+                    display: "Create a Game in Python",
+                    text: "Create a simple 2D game using Pygame. Make a platformer with a player character that can move, jump, and collect items. Include basic physics, collision detection, score system, multiple levels, and sound effects. Add a main menu and game over screen."
+                },
+                { 
+                    display: "Build a Chrome Extension",
+                    text: "Create a Chrome extension that helps with productivity. Features should include website blocking, pomodoro timer, task tracking, and custom notifications. Include local storage for settings, popup interface, and background scripts. Add sync functionality across devices."
+                },
+                { 
+                    display: "Create a CLI Tool",
+                    text: "Build a command-line interface tool using Python that helps developers automate common tasks. Include file operations, git integrations, project scaffolding, and configuration management. Add colorful output, progress bars, and interactive prompts. Make it installable via pip."
+                },
+                { 
+                    display: "Build an AI Chatbot",
+                    text: "Create an AI chatbot using Python and the OpenAI API. Include features like context management, conversation history, prompt templates, and response streaming. Add rate limiting, error handling, and a simple web interface. Include environment variable management and deployment instructions."
+                }
             ],
             learning: [
-                { icon: 'graduation-cap', text: 'Machine learning basics', textToSend: 'Explain machine learning concepts for beginners' },
-                { icon: 'graduation-cap', text: 'Database indexing', textToSend: 'Help me understand database indexing' },
-                { icon: 'graduation-cap', text: 'Software design pattern', textToSend: 'Teach me about software design patterns' },
-                { icon: 'graduation-cap', text: 'Blockchain explained', textToSend: 'Explain how blockchain technology works' },
-                { icon: 'graduation-cap', text: 'Cloud basics', textToSend: 'Guide me through cloud computing basics' },
-                { icon: 'graduation-cap', text: 'Big O notation', textToSend: 'Help me understand Big O notation' },
-                { icon: 'graduation-cap', text: 'Microservices intro', textToSend: 'Explain microservices architecture' },
-                { icon: 'graduation-cap', text: 'Cybersecurity basics', textToSend: 'Teach me about cybersecurity fundamentals' },
-                { icon: 'graduation-cap', text: 'Neural network intro', textToSend: 'Help me learn about artificial neural networks' },
-                { icon: 'graduation-cap', text: 'Docker explained', textToSend: 'Explain containerization and Docker' },
-                { icon: 'graduation-cap', text: 'Operating systems', textToSend: 'How operating systems works' },
-                { icon: 'graduation-cap', text: 'Network protocols', textToSend: 'Explain some common network protocols' },
-                { icon: 'graduation-cap', text: 'Agile methodology', textToSend: 'What is agile methdology' },
-                { icon: 'graduation-cap', text: 'Types of testing', textToSend: 'Explain types of software testing' },
-                { icon: 'graduation-cap', text: 'Version control', textToSend: 'How version control works' },
-                { icon: 'graduation-cap', text: 'Data mining', textToSend: 'What data mining actually means' },
-                { icon: 'graduation-cap', text: 'Artificial intelligence', textToSend: 'What is artificial intelligence' },
-                { icon: 'graduation-cap', text: 'Robotics principles', textToSend: 'What are principles of robotics' },
-                { icon: 'graduation-cap', text: 'UI/UX design', textToSend: 'Explain UI/UX principles' },
-                { icon: 'graduation-cap', text: 'Statistical analysis', textToSend: 'What is statistical analysis used for' },
+                { 
+                    display: "Explain Machine Learning",
+                    text: "Explain machine learning concepts for beginners. Cover supervised vs unsupervised learning, common algorithms (linear regression, decision trees, neural networks), overfitting vs underfitting, training/testing data splits, and provide simple real-world examples for each concept."
+                },
+                { 
+                    display: "Database Design Guide",
+                    text: "Guide me through database design best practices. Explain normalization, indexing strategies, relationship types, query optimization, and when to use different types of databases (SQL vs NoSQL). Include practical examples and common pitfalls to avoid."
+                },
+                { 
+                    display: "Learn System Design",
+                    text: "Teach me system design fundamentals. Cover scalability, load balancing, caching strategies, database sharding, microservices architecture, API gateway patterns, and message queues. Use real-world examples like designing Twitter or Netflix."
+                },
+                { 
+                    display: "Master Git Workflow",
+                    text: "Explain professional Git workflow and best practices. Cover branching strategies, commit conventions, merge vs rebase, handling merge conflicts, Git hooks, and working with remote repositories. Include real-world team collaboration scenarios."
+                },
+                { 
+                    display: "Learn Docker Basics",
+                    text: "Teach me Docker fundamentals from scratch. Explain containers, images, Dockerfile syntax, Docker Compose, networking, volumes, and multi-stage builds. Include best practices for optimizing images and securing containers. Provide practical examples for development and production."
+                },
+                { 
+                    display: "Understand Clean Code",
+                    text: "Explain clean code principles and best practices. Cover SOLID principles, design patterns, code organization, naming conventions, and refactoring techniques. Provide examples in multiple programming languages and discuss common anti-patterns to avoid."
+                },
+                { 
+                    display: "Learn Testing Strategies",
+                    text: "Guide me through software testing best practices. Cover unit testing, integration testing, end-to-end testing, test-driven development (TDD), and behavior-driven development (BDD). Include examples using popular testing frameworks and discuss test coverage and mocking."
+                },
+                { 
+                    display: "Master Regular Expressions",
+                    text: "Teach me regular expressions from basic to advanced. Cover pattern matching, quantifiers, groups, lookaheads/lookbehinds, and flags. Include practical examples for validation, parsing, and text manipulation. Provide exercises and common regex patterns."
+                }
             ],
             projects: [
-                { icon: 'laptop-code', text: 'Portfolio website', textToSend: 'Help me build a personal portfolio website' },
-                { icon: 'laptop-code', text: 'Todo app setup', textToSend: 'Create a todo app with local storage' },
-                { icon: 'laptop-code', text: 'Weather API app', textToSend: 'Build a weather application using an API' },
-                { icon: 'laptop-code', text: 'Markdown note app', textToSend: 'Create a markdown note-taking app' },
-                { icon: 'laptop-code', text: 'URL shortener idea', textToSend: 'Build a URL shortener service' },
-                { icon: 'laptop-code', text: 'File sharing app', textToSend: 'Create a file sharing application' },
-                { icon: 'laptop-code', text: 'Social dashboard', textToSend: 'Build a social media dashboard' },
-                { icon: 'laptop-code', text: 'E-commerce cart', textToSend: 'Create an e-commerce shopping cart' },
-                { icon: 'laptop-code', text: 'Real-time collab', textToSend: 'Build a real-time collaboration tool' },
-                { icon: 'laptop-code', text: 'Password manager', textToSend: 'Create a password manager application' },
-                { icon: 'laptop-code', text: 'Image editor app', textToSend: 'Design a image editor application' },
-                { icon: 'laptop-code', text: 'Music player app', textToSend: 'Build a web music player' },
-                { icon: 'laptop-code', text: 'Chatbot design', textToSend: 'Design a conversational chatbot application' },
-                { icon: 'laptop-code', text: 'Personal blog website', textToSend: 'How can I create a personal blog' },
-                { icon: 'laptop-code', text: 'Book library system', textToSend: 'Design a simple book library system' },
-                { icon: 'laptop-code', text: 'Calorie tracker app', textToSend: 'Create a calorie tracker application' },
-                { icon: 'laptop-code', text: 'Task management tool', textToSend: 'Create a task management application' },
-                { icon: 'laptop-code', text: 'E-learning app', textToSend: 'Design a e-learning web application' },
-                { icon: 'laptop-code', text: 'Recipe app', textToSend: 'How to create a recipe web app' },
-                { icon: 'laptop-code', text: 'Event planning app', textToSend: 'Design a event planning tool' },
+                { 
+                    display: "Weather App",
+                    text: "Help me build a weather application that uses the OpenWeatherMap API. Include features like 5-day forecast, location search, temperature unit conversion, weather alerts, and responsive design. Add geolocation support and weather icons with animations."
+                },
+                { 
+                    display: "Chat Application",
+                    text: "Create a real-time chat application using WebSocket. Include features like private messaging, group chats, file sharing, emoji support, message history, and user presence indicators. Add message encryption and notification system."
+                },
+                { 
+                    display: "E-commerce Platform",
+                    text: "Build an e-commerce platform with product catalog, shopping cart, user authentication, order processing, and payment integration (Stripe). Include features like product search/filter, reviews, wishlist, and admin dashboard."
+                },
+                { 
+                    display: "Blog Platform",
+                    text: "Create a blog platform with user authentication, CRUD operations for posts, comments system, categories/tags, and markdown support. Add features like search functionality, social sharing, and an admin panel for content management."
+                },
+                { 
+                    display: "Password Manager",
+                    text: "Build a secure password manager application with encryption, password generation, secure storage, and browser integration. Include features like password strength analysis, two-factor authentication, secure notes, and automatic form filling."
+                },
+                { 
+                    display: "Social Media Dashboard",
+                    text: "Create a social media analytics dashboard that integrates with multiple platforms (Twitter, Instagram, Facebook). Include real-time metrics, data visualization, scheduled posts, and engagement tracking. Add export functionality and custom reporting."
+                },
+                { 
+                    display: "File Sharing Service",
+                    text: "Build a secure file sharing service with features like drag-and-drop upload, file encryption, expiring links, and access controls. Include large file support, progress tracking, and preview functionality for common file types."
+                },
+                { 
+                    display: "Kanban Board",
+                    text: "Create a Kanban board application like Trello with drag-and-drop functionality, real-time updates, and team collaboration features. Include task assignments, due dates, labels, attachments, and activity tracking."
+                }
             ],
             problemSolving: [
-                { icon: 'brain', text: 'Optimize queries', textToSend: 'Help me optimize my database queries' },
-                { icon: 'brain', text: 'Debug auth system', textToSend: 'Debug my authentication system' },
-                { icon: 'brain', text: 'Improve API times', textToSend: 'Improve my API response times' },
-                { icon: 'brain', text: 'Fix memory leak', textToSend: 'Fix memory leaks in my application' },
-                { icon: 'brain', text: 'Optimize render', textToSend: 'Optimize my React component rendering' },
-                { icon: 'brain', text: 'Troubleshoot docker', textToSend: 'Troubleshoot my Docker container issues' },
-                { icon: 'brain', text: 'Scale web app', textToSend: 'Help me scale my web application' },
-                { icon: 'brain', text: 'Debug WebSocket', textToSend: 'Debug my WebSocket connection issues' },
-                { icon: 'brain', text: 'Image processing', textToSend: 'Optimize my image processing pipeline' },
-                { icon: 'brain', text: 'Fix cross-browser', textToSend: 'Fix cross-browser compatibility issues' },
-                { icon: 'brain', text: 'Solve a bug', textToSend: 'Help me solve this bug i cant understand' },
-                { icon: 'brain', text: 'Algorithim issue', textToSend: 'Help me fix an algorithim problem' },
-                { icon: 'brain', text: 'Memory issue', textToSend: 'How can I solve memory issue' },
-                { icon: 'brain', text: 'Network problem', textToSend: 'How can i solve this network problem' },
-                { icon: 'brain', text: 'Performance issues', textToSend: 'Help me in performance improvements' },
-                { icon: 'brain', text: 'Security issue', textToSend: 'How can i solve this security issue' },
-                { icon: 'brain', text: 'User experience', textToSend: 'Help me in improve user experience' },
-                { icon: 'brain', text: 'Database design', textToSend: 'How to fix the database design' },
-                { icon: 'brain', text: 'Testing issue', textToSend: 'Why my tests are failing' },
-                { icon: 'brain', text: 'Code refactoring', textToSend: 'Help me refactor my code' },
+                { 
+                    display: "Optimize Database",
+                    text: "Help me optimize my database performance. Current issues include slow query response times and high server load. Need help with query optimization, proper indexing strategies, caching implementation, and database normalization. Include monitoring and benchmarking approaches."
+                },
+                { 
+                    display: "Debug Memory Leaks",
+                    text: "Help identify and fix memory leaks in my Node.js application. Application memory usage grows over time and crashes. Need guidance on using memory profiling tools, common memory leak patterns, and best practices for memory management."
+                },
+                { 
+                    display: "Improve API Performance",
+                    text: "Optimize my REST API performance. Current issues include slow response times and high server load. Need help with implementing caching, pagination, rate limiting, and query optimization. Include monitoring and error handling improvements."
+                },
+                { 
+                    display: "Fix Security Issues",
+                    text: "Help me improve the security of my web application. Need guidance on implementing proper authentication, preventing XSS and CSRF attacks, securing API endpoints, implementing rate limiting, and following OWASP security best practices."
+                },
+                { 
+                    display: "Solve Scaling Issues",
+                    text: "Help me scale my web application to handle increased traffic. Need guidance on implementing horizontal scaling, load balancing, caching strategies, and database optimization. Include monitoring solutions and performance metrics."
+                },
+                { 
+                    display: "Fix Frontend Performance",
+                    text: "Help optimize my React application's performance. Issues include slow initial load, render bottlenecks, and memory usage. Need help with code splitting, lazy loading, memo/useMemo usage, and bundle size optimization."
+                },
+                { 
+                    display: "Debug Authentication",
+                    text: "Help fix issues with my authentication system. Problems include token management, session handling, and security vulnerabilities. Need guidance on implementing secure authentication flow, password reset, and social login integration."
+                },
+                { 
+                    display: "Optimize Docker Setup",
+                    text: "Help improve my Docker development and production setup. Need guidance on optimizing container builds, reducing image sizes, improving compose configuration, and implementing proper networking and volume management."
+                }
             ]
         };
-    
+
         function getRandomExample(category) {
             const examples = exampleMessages[category];
             return examples[Math.floor(Math.random() * examples.length)];
@@ -2056,7 +2384,8 @@
             const codingExample = getRandomExample('coding');
             const learningExample = getRandomExample('learning');
             const projectsExample = getRandomExample('projects');
-            const problemSolvingExample = getRandomExample('problemSolving');       
+            const problemSolvingExample = getRandomExample('problemSolving');
+
             return `
                 <div class="welcome-content">
                     <i class="fa-solid fa-hexagon-nodes welcome-icon"></i>
@@ -2077,21 +2406,21 @@
                         </div>
                     </div>
                     <div class="example-messages">
-                        <button class="example-message" onclick="useExampleMessage('${codingExample.textToSend}')">
-                            <i class="fas fa-${codingExample.icon}"></i>
-                            ${codingExample.text}
+                        <button class="example-message" onclick="useExampleMessage('${codingExample.text}')">
+                            <i class="fas fa-code"></i>
+                            <span>${codingExample.display}</span>
                         </button>
-                        <button class="example-message" onclick="useExampleMessage('${learningExample.textToSend}')">
-                            <i class="fas fa-${learningExample.icon}"></i>
-                            ${learningExample.text}
+                        <button class="example-message" onclick="useExampleMessage('${learningExample.text}')">
+                            <i class="fas fa-graduation-cap"></i>
+                            <span>${learningExample.display}</span>
                         </button>
-                        <button class="example-message" onclick="useExampleMessage('${projectsExample.textToSend}')">
-                            <i class="fas fa-${projectsExample.icon}"></i>
-                            ${projectsExample.text}
+                        <button class="example-message" onclick="useExampleMessage('${projectsExample.text}')">
+                            <i class="fas fa-laptop-code"></i>
+                            <span>${projectsExample.display}</span>
                         </button>
-                        <button class="example-message" onclick="useExampleMessage('${problemSolvingExample.textToSend}')">
-                            <i class="fas fa-${problemSolvingExample.icon}"></i>
-                            ${problemSolvingExample.text}
+                        <button class="example-message" onclick="useExampleMessage('${problemSolvingExample.text}')">
+                            <i class="fas fa-brain"></i>
+                            <span>${problemSolvingExample.display}</span>
                         </button>
                     </div>
                 </div>
@@ -2116,6 +2445,11 @@
                 displayChatHistory();
                 renderChatList();
                 document.getElementById('currentChatTitle').textContent = 'New Chat';
+                // Clear input and images
+                document.getElementById('prompt').value = '';
+                document.getElementById('imagePreview').innerHTML = '';
+                uploadedImages = [];
+                updateSendButtonState();
                 return;
             }
 
@@ -2132,6 +2466,11 @@
             chatHistory = [];
             // Reset to default AI settings
             SYSTEM_INSTRUCTIONS = DEFAULT_SYSTEM_INSTRUCTIONS;
+            // Clear input and images
+            document.getElementById('prompt').value = '';
+            document.getElementById('imagePreview').innerHTML = '';
+            uploadedImages = [];
+            updateSendButtonState();
             saveChats();
             updateCustomAIInfo();
             renderChatList();
@@ -2192,6 +2531,11 @@
                 chatHistory = [...chat.messages];
                 SYSTEM_INSTRUCTIONS = chat.systemInstructions || DEFAULT_SYSTEM_INSTRUCTIONS;
                 document.getElementById('currentChatTitle').textContent = chat.title;
+                // Clear input and images when switching chats
+                document.getElementById('prompt').value = '';
+                document.getElementById('imagePreview').innerHTML = '';
+                uploadedImages = [];
+                updateSendButtonState();
                 updateCustomAIInfo();
                 displayChatHistory();
                 renderChatList();
@@ -2261,6 +2605,11 @@
                             updateChatListAndUI();
                         }
                         document.getElementById('currentChatTitle').textContent = 'New Chat';
+                        // Clear input and images
+                        document.getElementById('prompt').value = '';
+                        document.getElementById('imagePreview').innerHTML = '';
+                        uploadedImages = [];
+                        updateSendButtonState();
                         displayChatHistory();
                     }
                 );
@@ -2293,6 +2642,11 @@
                             createNewChat();
                         }
                         
+                        // Clear input and images
+                        document.getElementById('prompt').value = '';
+                        document.getElementById('imagePreview').innerHTML = '';
+                        uploadedImages = [];
+                        updateSendButtonState();
                         updateCustomAIInfo();
                         saveChats();
                         renderChatList();
@@ -2478,6 +2832,13 @@
         function updateGeneratingState(generating) {
             isGenerating = generating;
             document.getElementById('stopGenerate').classList.toggle('visible', generating);
+            
+            // Update send button state
+            if (!generating) {
+                updateSendButtonState();
+            } else {
+                document.querySelector('.send-button').disabled = true;
+            }
             
             // Disable chat items
             document.querySelectorAll('.chat-item').forEach(item => {
@@ -2714,6 +3075,11 @@
             chatHistory = [];
             SYSTEM_INSTRUCTIONS = ai.instructions;
             
+            // Clear input and images when creating new AI chat
+            document.getElementById('prompt').value = '';
+            document.getElementById('imagePreview').innerHTML = '';
+            uploadedImages = [];
+            updateSendButtonState();
             saveChats();
             updateCustomAIInfo();
             renderChatList();
@@ -2813,6 +3179,246 @@
                 infoDiv.style.display = 'none';
             }
         }
+
+        // Remove the format buttons and message preview references
+        const keyboardShortcuts = {
+            'ctrl+k': { action: showCommandPalette, description: 'Open command palette' },
+            'ctrl+n': { action: createNewChat, description: 'Create new chat' },
+            'ctrl+i': { action: () => document.getElementById('imageInput').click(), description: 'Upload image' },
+            'ctrl+enter': { action: generateContent, description: 'Send message' },
+            'ctrl+b': { action: toggleSidebar, description: 'Toggle sidebar' },
+            'ctrl+/': { action: showKeyboardShortcuts, description: 'Show keyboard shortcuts' },
+            'esc': { action: () => {
+                hideCommandPalette();
+                document.getElementById('prompt').value = '';
+                updateSendButtonState();
+            }, description: 'Clear input/Close modals' }
+        };
+
+        // Add keyboard shortcuts modal
+        function showKeyboardShortcuts() {
+            const shortcutsList = Object.entries(keyboardShortcuts)
+                .map(([key, { description }]) => `
+                    <div class="shortcut-item">
+                        <span class="shortcut-key">${key.toUpperCase()}</span>
+                        <span class="shortcut-description">${description}</span>
+                    </div>
+                `).join('');
+
+            showModal(
+                'Keyboard Shortcuts',
+                `<div class="shortcuts-container">${shortcutsList}</div>`,
+                'Close',
+                '',
+                null,
+                null
+            );
+        }
+
+        // Add styles for new features
+        const style = document.createElement('style');
+        style.textContent = `
+            .shortcuts-container {
+                display: flex;
+                flex-direction: column;
+                gap: 0.75rem;
+                max-height: 400px;
+                overflow-y: auto;
+            }
+
+            .shortcut-item {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 0.5rem;
+                background: rgba(255, 255, 255, 0.05);
+                border-radius: 6px;
+            }
+
+            .shortcut-key {
+                background: var(--google-gradient);
+                padding: 0.25rem 0.5rem;
+                border-radius: 4px;
+                font-family: monospace;
+                font-size: 0.875rem;
+            }
+
+            .shortcut-description {
+                color: var(--text-primary);
+                opacity: 0.8;
+            }
+
+            /* Accessibility improvements */
+            .visually-hidden {
+                position: absolute;
+                width: 1px;
+                height: 1px;
+                padding: 0;
+                margin: -1px;
+                overflow: hidden;
+                clip: rect(0, 0, 0, 0);
+                border: 0;
+            }
+
+            /* High contrast focus indicators */
+            button:focus-visible,
+            input:focus-visible,
+            textarea:focus-visible {
+                outline: 2px solid #fff;
+                outline-offset: 2px;
+            }
+
+            /* Skip to main content link */
+            .skip-link {
+                position: absolute;
+                top: -40px;
+                left: 0;
+                background: var(--google-gradient);
+                color: white;
+                padding: 8px;
+                z-index: 100;
+                transition: top 0.2s;
+            }
+
+            .skip-link:focus {
+                top: 0;
+            }
+
+            /* Improved button focus states */
+            .sidebar-action-btn:focus-visible,
+            .custom-ai-action:focus-visible {
+                outline: 2px solid #fff;
+                outline-offset: 2px;
+            }
+
+            /* Drag and drop styles */
+            .drag-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.7);
+                display: none;
+                justify-content: center;
+                align-items: center;
+                z-index: 9999;
+                backdrop-filter: blur(4px);
+            }
+
+            .drag-overlay.active {
+                display: flex;
+            }
+
+            .drag-message {
+                padding: 2rem;
+                border: 2px dashed rgba(255, 255, 255, 0.3);
+                border-radius: 12px;
+                color: white;
+                font-size: 1.25rem;
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+            }
+
+            .drag-message i {
+                font-size: 2rem;
+                background: var(--google-gradient);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Add keyboard shortcut listener
+        document.addEventListener('keydown', function(e) {
+            // Don't trigger shortcuts when typing in input fields
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+                if (e.key === 'Enter' && e.ctrlKey) {
+                    e.preventDefault();
+                    generateContent();
+                }
+                return;
+            }
+
+            const key = `${e.ctrlKey ? 'ctrl+' : ''}${e.key.toLowerCase()}`;
+            const shortcut = keyboardShortcuts[key];
+            
+            if (shortcut) {
+                e.preventDefault();
+                shortcut.action();
+            }
+        });
+
+        // Add drag overlay to the DOM
+        const dragOverlay = document.createElement('div');
+        dragOverlay.className = 'drag-overlay';
+        dragOverlay.innerHTML = `
+            <div class="drag-message">
+                <i class="fas fa-cloud-upload-alt"></i>
+                Drop images here
+            </div>
+        `;
+        document.body.appendChild(dragOverlay);
+
+        // Add skip link for accessibility
+        const skipLink = document.createElement('a');
+        skipLink.href = '#chatHistory';
+        skipLink.className = 'skip-link';
+        skipLink.textContent = 'Skip to main content';
+        document.body.insertBefore(skipLink, document.body.firstChild);
+
+        // Add ARIA labels and roles
+        document.querySelector('.chat-container').setAttribute('role', 'main');
+        document.querySelector('.sidebar').setAttribute('role', 'navigation');
+        document.querySelector('.chat-history').setAttribute('role', 'log');
+        document.querySelector('.input-container').setAttribute('role', 'form');
+
+        // Add drag and drop handling
+        const dropZone = document.body;
+        
+        dropZone.addEventListener('dragenter', (e) => {
+            e.preventDefault();
+            if (e.dataTransfer.types.includes('Files')) {
+                dragOverlay.classList.add('active');
+            }
+        });
+
+        dragOverlay.addEventListener('dragover', (e) => {
+            e.preventDefault();
+        });
+
+        dragOverlay.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            if (e.relatedTarget === null) {
+                dragOverlay.classList.remove('active');
+            }
+        });
+
+        dragOverlay.addEventListener('drop', async (e) => {
+            e.preventDefault();
+            dragOverlay.classList.remove('active');
+            
+            const files = Array.from(e.dataTransfer.files).filter(file => 
+                file.type.startsWith('image/')
+            );
+
+            if (files.length > 0) {
+                await handleImageFiles(files);
+            }
+        });
+
+        // Add clipboard paste handling
+        document.addEventListener('paste', async (e) => {
+            const items = Array.from(e.clipboardData.items);
+            const imageItems = items.filter(item => item.type.startsWith('image/'));
+            
+            if (imageItems.length > 0) {
+                e.preventDefault();
+                const files = imageItems.map(item => item.getAsFile());
+                await handleImageFiles(files);
+            }
+        });
     </script>
 </body>
 </html>
