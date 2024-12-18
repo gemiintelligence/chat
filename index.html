@@ -1511,19 +1511,44 @@
             }
 
             .message {
-                padding: 0.5rem;
+                padding: 0.75rem;
+                position: relative;
             }
 
             .message-actions {
-                position: static;
+                position: absolute;
+                top: 0.5rem;
+                right: 0.5rem;
                 opacity: 1;
-                margin-top: 0.5rem;
-                justify-content: flex-end;
+                display: flex;
+                gap: 0.5rem;
+                z-index: 10;
+                background: var(--surface-dark);
+                padding: 0.25rem;
+                border-radius: 8px;
             }
 
             .action-button {
-                width: 36px;
-                height: 36px;
+                width: 32px;
+                height: 32px;
+                background: rgba(255, 255, 255, 0.1);
+            }
+
+            .message-content {
+                padding-top: 2rem;
+                width: 100%;
+            }
+
+            @media (orientation: portrait) {
+                .message-actions {
+                    position: absolute;
+                }
+            }
+
+            @media (orientation: landscape) {
+                .message-actions {
+                    position: absolute;
+                }
             }
 
             .code-block-header {
@@ -1638,6 +1663,10 @@
             }
 
             .message-actions {
+                opacity: 1;
+            }
+
+            .message:hover .message-actions {
                 opacity: 1;
             }
         }
