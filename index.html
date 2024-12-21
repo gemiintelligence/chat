@@ -16,6 +16,7 @@
             --background-dark: #000000;
             --surface-dark: #111111;
             --text-primary: #FFFFFF;
+            --text-primary-rgb: 255, 255, 255;
         }
 
         * {
@@ -181,6 +182,7 @@
             color: var(--text-primary);
             transition: all 0.2s ease;
             border: 1px solid transparent;
+            position: relative;
         }
 
         .chat-item.disabled {
@@ -212,6 +214,7 @@
         .chat-item-content {
             flex: 1;
             overflow: hidden;
+            padding-right: 2rem;
         }
 
         .chat-item-title {
@@ -230,88 +233,42 @@
             text-overflow: ellipsis;
         }
 
-        .command-palette {
-            position: fixed;
-            top: 20%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 600px;
-            background: var(--surface-dark);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-            z-index: 1000;
-            display: none;
-        }
-
-        .command-palette.active {
-            display: block;
-        }
-
-        .command-input {
-            width: 100%;
-            padding: 1rem;
+        .chat-item-pin {
+            position: absolute;
+            right: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
             background: transparent;
             border: none;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             color: var(--text-primary);
-            font-size: 1rem;
-            outline: none;
-        }
-
-        .command-list {
-            max-height: 400px;
-            overflow-y: auto;
-            padding: 0.5rem;
-        }
-
-        .command-item {
-            padding: 0.75rem;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
+            opacity: 0;
             cursor: pointer;
-            border-radius: 8px;
+            padding: 0.25rem;
+            border-radius: 4px;
             transition: all 0.2s ease;
         }
 
-        .command-item:hover {
+        .chat-item:hover .chat-item-pin {
+            opacity: 0.5;
+        }
+
+        .chat-item-pin:hover {
+            opacity: 1 !important;
             background: rgba(255, 255, 255, 0.1);
         }
 
-        .command-item.selected {
-            background: rgba(255, 255, 255, 0.15);
+        .chat-item-pin.pinned {
+            opacity: 1;
+            color: var(--google-gradient-start);
+            transform: translateY(-50%) rotate(-45deg);
         }
 
-        .command-icon {
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: rgba(255, 255, 255, 0.7);
+        .chat-item-pin.pinned:hover {
+            transform: translateY(-50%) rotate(-45deg) scale(1.1);
         }
 
-        .command-info {
-            flex: 1;
-        }
-
-        .command-title {
-            font-size: 0.875rem;
-            font-weight: 500;
-        }
-
-        .command-description {
-            font-size: 0.75rem;
-            color: rgba(255, 255, 255, 0.5);
-        }
-
-        .command-shortcut {
-            font-size: 0.75rem;
-            color: rgba(255, 255, 255, 0.5);
-            background: rgba(255, 255, 255, 0.1);
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
+        .chat-item[data-pinned="true"] {
+            border-left: 2px solid var(--google-gradient-start);
         }
 
         .chat-header {
@@ -351,9 +308,27 @@
             gap: 0.5rem;
             padding: 0.25rem 0.75rem;
             border-radius: 6px;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(var(--text-primary-rgb), 0.1);
             font-size: 0.875rem;
             white-space: nowrap;
+            color: var(--text-primary);
+        }
+
+        #messageCountInfo.warning {
+            background: linear-gradient(45deg, #f4b400, #db4437);
+            color: white !important;
+        }
+        
+        #messageCountInfo.danger {
+            background: #db4437;
+            color: white !important;
+        }
+
+        #messageCountInfo.warning i,
+        #messageCountInfo.danger i,
+        #messageCountInfo.warning span,
+        #messageCountInfo.danger span {
+            color: white !important;
         }
 
         .chat-history {
@@ -856,6 +831,41 @@
             filter: brightness(1.1);
         }
 
+        /* Add scroll button styles */
+        .scroll-bottom-btn {
+            position: fixed;
+            bottom: 100px;
+            right: 20px;
+            background: var(--google-gradient);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            z-index: 100;
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+        .scroll-bottom-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+        }
+
+        .scroll-bottom-btn.visible {
+            display: flex;
+            animation: bounce 1s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
         .custom-ai-section {
             padding: 1rem;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
@@ -1086,7 +1096,7 @@
 
         .welcome-icon {
             font-size: 3.5rem;
-            margin-bottom: 1.5rem;
+            opacity: 0.9;
             background: var(--google-gradient);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -1134,7 +1144,8 @@
 
         .welcome-feature i {
             font-size: 1.25rem;
-            color: rgba(255, 255, 255, 0.8);
+            opacity: 0.9;
+            color: var(--text-primary);
         }
 
         .welcome-feature-text {
@@ -1180,7 +1191,7 @@
 
         .example-message i {
             font-size: 1rem;
-            opacity: 0.7;
+            opacity: 0.9;
             position: absolute;
             left: 1rem;
         }
@@ -1197,7 +1208,7 @@
 
         .example-message i {
             font-size: 1rem;
-            opacity: 0.7;
+            opacity: 0.9;
             position: absolute;
             left: 1rem;
         }
@@ -1364,29 +1375,6 @@
             background: var(--google-gradient);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-        }
-
-        #messageCountInfo.warning {
-            background: linear-gradient(45deg, #f4b400, #db4437);
-        }
-        
-        #messageCountInfo.danger {
-            background: #db4437;
-        }
-        
-        #messageCountInfo {
-            transition: all 0.3s ease;
-        }
-        
-        #messageCountInfo.warning,
-        #messageCountInfo.danger {
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.7; }
-            100% { opacity: 1; }
         }
 
         /* Desktop Styles */
@@ -1670,9 +1658,1129 @@
                 opacity: 1;
             }
         }
+
+        /* Add splash screen styles at the top */
+        .splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--background-dark);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 1;
+            overflow: hidden;
+        }
+
+        .splash-screen::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                rgba(66, 133, 244, 0.15),
+                rgba(219, 68, 55, 0.15),
+                rgba(244, 180, 0, 0.15),
+                rgba(15, 157, 88, 0.15)
+            );
+            animation: gradientMove 15s linear infinite;
+            opacity: 0;
+            animation: fadeInGradient 2s ease forwards 0.5s;
+        }
+
+        .splash-screen::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(
+                circle at center,
+                transparent 0%,
+                var(--background-dark) 70%
+            );
+        }
+
+        .splash-content {
+            text-align: center;
+            transform: scale(0.8);
+            opacity: 0;
+            animation: splashIntro 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            max-width: 800px;
+            width: 90%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            padding: 0;
+            z-index: 1;
+        }
+
+        .splash-logo {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            background: var(--google-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: logoAnimation 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+            display: inline-block;
+            position: relative;
+            filter: drop-shadow(0 0 20px rgba(66, 133, 244, 0.3));
+        }
+
+        .splash-logo::after {
+            content: '';
+            position: absolute;
+            top: -20%;
+            left: -20%;
+            right: -20%;
+            bottom: -20%;
+            background: radial-gradient(
+                circle at center,
+                rgba(255, 255, 255, 0.2) 0%,
+                transparent 70%
+            );
+            animation: glowPulse 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        }
+
+        .splash-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            background: var(--google-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards 0.5s,
+                      gradientFlow 5s ease infinite;
+            background-size: 300% 300%;
+            filter: drop-shadow(0 0 10px rgba(66, 133, 244, 0.2));
+        }
+
+        .splash-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-primary);
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards 1s;
+            margin-bottom: 2rem;
+            position: relative;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+        }
+
+        .splash-subtitle::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 2px;
+            background: var(--google-gradient);
+            animation: lineWidth 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        }
+
+        @keyframes logoAnimation {
+            0% { transform: rotate(0deg) scale(1); filter: hue-rotate(0deg) brightness(1); }
+            25% { transform: rotate(90deg) scale(1.1); filter: hue-rotate(90deg) brightness(1.2); }
+            50% { transform: rotate(180deg) scale(1.2); filter: hue-rotate(180deg) brightness(1.4); }
+            75% { transform: rotate(270deg) scale(1.1); filter: hue-rotate(270deg) brightness(1.2); }
+            100% { transform: rotate(360deg) scale(1); filter: hue-rotate(360deg) brightness(1); }
+        }
+
+        @keyframes glowPulse {
+            0% { opacity: 0; transform: scale(0.8) rotate(0deg); }
+            25% { opacity: 0.3; transform: scale(1) rotate(90deg); }
+            50% { opacity: 0.5; transform: scale(1.2) rotate(180deg); }
+            75% { opacity: 0.3; transform: scale(1) rotate(270deg); }
+            100% { opacity: 0; transform: scale(0.8) rotate(360deg); }
+        }
+
+        @keyframes gradientMove {
+            0% { transform: translate(-50%, -50%) rotate(0deg) scale(1); }
+            50% { transform: translate(-50%, -50%) rotate(180deg) scale(1.2); }
+            100% { transform: translate(-50%, -50%) rotate(360deg) scale(1); }
+        }
+
+        @keyframes fadeInGradient {
+            0% { opacity: 0; transform: scale(0.8); }
+            50% { opacity: 0.5; transform: scale(1.1); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes lineWidth {
+            0% { width: 0; opacity: 0; transform: translateX(-50%) scaleX(0); }
+            50% { width: 100px; opacity: 1; transform: translateX(-50%) scaleX(1); }
+            100% { width: 0; opacity: 0; transform: translateX(-50%) scaleX(0); }
+        }
+
+        @keyframes gradientFlow {
+            0% { background-position: 0% 50%; filter: hue-rotate(0deg); }
+            50% { background-position: 100% 50%; filter: hue-rotate(180deg); }
+            100% { background-position: 0% 50%; filter: hue-rotate(360deg); }
+        }
+
+        @keyframes splashIntro {
+            0% { transform: scale(0.8) translateY(20px); opacity: 0; }
+            50% { transform: scale(1.1) translateY(-10px); opacity: 0.5; }
+            100% { transform: scale(1) translateY(0); opacity: 1; }
+        }
+
+        @keyframes fadeInUp {
+            0% { 
+                opacity: 0;
+                transform: translateY(20px) scale(0.9);
+            }
+            50% { 
+                opacity: 0.5;
+                transform: translateY(-5px) scale(1.05);
+            }
+            100% { 
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .setup-steps {
+            display: none;
+            flex-direction: column;
+            gap: 1rem;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            height: 100%;
+            width: 100%;
+        }
+
+        .setup-step {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 600px;
+            text-align: center;
+            display: none;
+            opacity: 0;
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: visible;
+            height: auto;
+            gap: 1.5rem;
+            min-height: 100%;
+            padding: 8rem 0;  /* Increased padding */
+            box-sizing: border-box;
+            perspective: 1000px;
+        }
+
+        .setup-step.active {
+            display: flex;
+            flex-direction: column;
+            opacity: 1;
+            justify-content: center;
+        }
+
+        .step-header-card,
+        .step-content-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            margin-bottom: 1.5rem;  /* Added margin */
+        }
+
+        .setup-step.slide-out .step-header-card {
+            opacity: 0;
+        }
+
+        .setup-step.slide-out .step-content-card {
+            opacity: 0;
+            transition-delay: 0.1s;
+        }
+
+        .setup-step.slide-in .step-header-card {
+            animation: cardFadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        .setup-step.slide-in .step-content-card {
+            animation: cardFadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) 0.1s forwards;
+        }
+
+        @keyframes cardFadeIn {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+
+        .setup-buttons {
+            position: fixed;
+            bottom: 10rem;  /* Increased bottom spacing */
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            z-index: 100;
+            width: 100%;
+            max-width: 600px;
+            padding: 0 1rem;
+        }
+
+        .setup-button {
+            padding: 0.75rem 2rem;
+            border-radius: 12px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--text-primary);
+            min-width: 150px;
+            justify-content: center;
+            transform: translateY(0);
+        }
+
+        .setup-button:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .setup-button:active:not(:disabled) {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .setup-progress {
+            position: fixed;
+            bottom: 8rem;  /* Increased bottom spacing */
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 1rem;
+            z-index: 10;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .progress-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            transform: scale(1);
+        }
+
+        .progress-dot.active {
+            background: var(--google-gradient);
+            transform: scale(1.2);
+            box-shadow: 0 0 10px rgba(66, 133, 244, 0.5);
+        }
+
+        @keyframes logoSpin {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.2); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+
+        @keyframes splashIntro {
+            0% {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        @media (max-height: 800px) {
+            .setup-step {
+                padding: 6rem 0;
+            }
+            
+            .setup-buttons {
+                bottom: 8rem;
+            }
+            
+            .setup-progress {
+                bottom: 6rem;
+            }
+        }
+
+        @media (max-height: 600px) {
+            .setup-step {
+                padding: 4rem 0;
+            }
+            
+            .setup-buttons {
+                bottom: 6rem;
+            }
+            
+            .setup-progress {
+                bottom: 4rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .theme-preview {
+                flex-direction: column;
+                align-items: center;
+                gap: 1rem;
+            }
+
+            .theme-option {
+                width: 100%;
+                max-width: 300px;
+                height: 120px;
+            }
+            
+            .setup-step {
+                width: 95%;
+                padding: 4rem 1rem;
+            }
+            
+            .step-icon {
+                width: 60px;
+                height: 60px;
+                font-size: 1.5rem;
+            }
+            
+            .step-title {
+                font-size: 1.5rem;
+            }
+        }
+
+        .preference-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            width: 100%;
+            max-width: 600px;
+            margin: 1rem auto;
+        }
+
+        .preference-option {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            height: auto;
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            min-height: 85px;  /* Reduced from 120px */
+        }
+
+        .preference-option:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .preference-option.selected {
+            background: var(--google-gradient);
+            border-color: transparent;
+            transform: scale(1.05);
+        }
+
+        .preference-option i {
+            font-size: 1.5rem;  /* Reduced from 2rem */
+            margin-bottom: 0.25rem;  /* Reduced from 0.5rem */
+        }
+
+        .preference-option span {
+            font-size: 0.9rem;  /* Reduced from default */
+        }
+
+        @media (max-width: 480px) {
+            .preference-option {
+                min-height: 70px;  /* Reduced from 100px */
+                padding: 0.75rem;
+            }
+        }
+
+        .setup-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 0.5rem 0;
+            cursor: pointer;
+        }
+
+        .setup-checkbox input {
+            width: 18px;
+            height: 18px;
+            border-radius: 4px;
+            accent-color: var(--google-gradient-start);
+        }
+
+        .theme-preview {
+            display: flex;
+            gap: 2rem;
+            margin: 2rem 0;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .theme-option {
+            width: 250px;
+            height: 150px;
+            border-radius: 16px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 1rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .theme-option:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        .theme-option.selected {
+            border-color: var(--google-gradient-start);
+            transform: scale(1.05);
+            box-shadow: 0 8px 32px rgba(66, 133, 244, 0.3);
+        }
+
+        .theme-dark {
+            background: #000000;
+            color: white;
+        }
+
+        .theme-light {
+            background: #ffffff;
+            color: black;
+        }
+
+        .theme-preview-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .theme-preview-content i {
+            font-size: 2.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .theme-preview-content span {
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+
+        .theme-dark .theme-preview-content {
+            color: white;
+        }
+
+        .theme-light .theme-preview-content {
+            color: black;
+        }
+
+        /* Add theme preview mockup elements */
+        .theme-option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .theme-option::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            width: 40px;
+            top: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.05);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .theme-light::before {
+            background: rgba(0, 0, 0, 0.05);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .theme-light::after {
+            background: rgba(0, 0, 0, 0.02);
+            border-right: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            .theme-option {
+                width: 200px;
+                height: 120px;
+            }
+
+            .theme-preview-content i {
+                font-size: 2rem;
+            }
+
+            .theme-preview-content span {
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .theme-preview {
+                flex-direction: column;
+                align-items: center;
+                gap: 1rem;
+            }
+
+            .theme-option {
+                width: 250px;
+                height: 130px;
+            }
+        }
+
+        /* Update existing setup step styles */
+        .setup-step {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .setup-button.primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .fa-spin {
+            animation: spin 1s linear infinite;
+        }
+
+        .setup-button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        @keyframes fadeInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes gradientFlow {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        @media (max-height: 800px) {
+            .splash-content {
+                height: 95vh;
+                padding: 1rem;
+            }
+
+            .setup-step {
+                padding: 6rem 0;
+            }
+
+            .preference-option {
+                height: 80px;
+                padding: 0.75rem;
+            }
+
+            .setup-input {
+                padding: 0.5rem;
+                margin-bottom: 0.5rem;
+            }
+        }
+
+        @media (max-height: 600px) {
+            .preference-options {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+
+            .preference-option {
+                height: 70px;
+                padding: 0.5rem;
+            }
+        }
+
+        .setup-input {
+            width: 100%;
+            max-width: 300px;
+            margin: 0.75rem auto;
+            padding: 1rem;
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            height: 50px;
+            display: block;
+        }
+
+        .setup-input:focus {
+            border-color: rgba(255, 255, 255, 0.3);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .setup-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .setup-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;  /* Increased gap */
+            margin: 2rem 0;  /* Increased margin */
+            width: 100%;
+        }
+
+        .setup-input-label {
+            font-size: 1rem;  /* Increased size */
+            color: var(--text-primary);
+            opacity: 0.9;  /* Increased opacity */
+            margin-bottom: 0.5rem;
+            text-align: left;
+            display: block;
+        }
+
+        .setup-input-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            width: 100%;
+        }
+
+        .step-icon {
+            margin: 0 auto 1.5rem;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: var(--google-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+            color: white;
+            position: relative;
+            animation: iconPulse 2s ease infinite;
+        }
+
+        .step-icon::after {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: var(--google-gradient);
+            border-radius: 50%;
+            z-index: -1;
+            opacity: 0.5;
+            animation: iconRing 2s ease infinite;
+        }
+
+        @keyframes iconPulse {
+            0% { transform: scale(1); filter: brightness(1); }
+            50% { transform: scale(1.1); filter: brightness(1.2); }
+            100% { transform: scale(1); filter: brightness(1); }
+        }
+
+        @keyframes iconRing {
+            0% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.4); opacity: 0; }
+            100% { transform: scale(1); opacity: 0.5; }
+        }
     </style>
 </head>
 <body>
+    <!-- Add splash screen HTML right after body tag -->
+    <div class="splash-screen" id="splashScreen">
+        <div class="splash-content">
+            <div class="splash-logo">
+                <i class="fa-solid fa-hexagon-nodes"></i>
+            </div>
+            <div class="splash-title">Welcome to Gemi</div>
+            <div class="splash-subtitle">Your Advanced AI Assistant</div>
+            
+            <div class="setup-steps" id="setupSteps">
+                <div class="setup-step" data-step="1">
+                    <div class="step-content-card">
+                        <div class="step-icon">
+                            <i class="fas fa-magic"></i>
+                        </div>
+                        <div class="step-title">Welcome to Gemi</div>
+                        <div class="step-description">
+                            Gemi is your advanced AI assistant, designed to help you with coding, learning, and problem-solving. Let's take a moment to personalize your experience and make Gemi work perfectly for you.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="setup-step" data-step="2">
+                    <div class="step-content-card">
+                        <div class="step-icon">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="step-title">About You</div>
+                        <div class="setup-input-group">
+                            <div class="setup-input-wrapper">
+                                <label class="setup-input-label" for="userName">What should we call you?</label>
+                                <input type="text" class="setup-input" id="userName" placeholder="Enter your name" maxlength="50">
+                            </div>
+                            <div class="setup-input-wrapper">
+                                <label class="setup-input-label" for="userRole">What's your role?</label>
+                                <input type="text" class="setup-input" id="userRole" placeholder="e.g., Developer, Student, Designer">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="setup-step" data-step="3">
+                    <div class="step-content-card">
+                        <div class="step-icon">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <div class="step-title">Experience & Goals</div>
+                        <div class="setup-input-group">
+                            <div>
+                                <label class="setup-input-label" for="userExperience">Your experience level?</label>
+                                <input type="text" class="setup-input" id="userExperience" placeholder="e.g., Beginner, Intermediate, Expert">
+                            </div>
+                            <div>
+                                <label class="setup-input-label" for="userGoals">What are your main goals?</label>
+                                <input type="text" class="setup-input" id="userGoals" placeholder="What do you want to achieve with Gemi?">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="setup-step" data-step="4">
+                    <div class="step-content-card">
+                        <div class="step-icon">
+                            <i class="fas fa-palette"></i>
+                        </div>
+                        <div class="step-title">Visual Preferences</div>
+                        <div class="step-description">Select your preferred theme.</div>
+                        <div class="theme-preview">
+                            <div class="theme-option theme-dark selected" onclick="selectTheme('dark', this)">
+                                <div class="theme-preview-content">
+                                    <i class="fas fa-moon"></i>
+                                    <span>Dark Theme</span>
+                                </div>
+                            </div>
+                            <div class="theme-option theme-light" onclick="selectTheme('light', this)">
+                                <div class="theme-preview-content">
+                                    <i class="fas fa-sun"></i>
+                                    <span>Light Theme</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="setup-step" data-step="5">
+                    <div class="step-content-card">
+                        <div class="step-icon">
+                            <i class="fas fa-code"></i>
+                        </div>
+                        <div class="step-title">Primary Interests</div>
+                        <div class="step-description">Select your main areas of interest to help us tailor your experience.</div>
+                        <div class="preference-options">
+                            <div class="preference-option" onclick="togglePreference(this)" data-value="coding">
+                                <i class="fas fa-code"></i>
+                                <span>Coding</span>
+                            </div>
+                            <div class="preference-option" onclick="togglePreference(this)" data-value="design">
+                                <i class="fas fa-paint-brush"></i>
+                                <span>Design</span>
+                            </div>
+                            <div class="preference-option" onclick="togglePreference(this)" data-value="learning">
+                                <i class="fas fa-graduation-cap"></i>
+                                <span>Learning</span>
+                            </div>
+                            <div class="preference-option" onclick="togglePreference(this)" data-value="business">
+                                <i class="fas fa-briefcase"></i>
+                                <span>Business</span>
+                            </div>
+                            <div class="preference-option" onclick="togglePreference(this)" data-value="research">
+                                <i class="fas fa-microscope"></i>
+                                <span>Research</span>
+                            </div>
+                            <div class="preference-option" onclick="togglePreference(this)" data-value="writing">
+                                <i class="fas fa-pen-fancy"></i>
+                                <span>Writing</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="setup-step" data-step="6">
+                    <div class="step-content-card">
+                        <div class="step-icon">
+                            <i class="fas fa-tasks"></i>
+                        </div>
+                        <div class="step-title">Use Cases</div>
+                        <div class="step-description">What would you like to use Gemi for? This helps us optimize responses.</div>
+                        <div class="preference-options">
+                            <div class="preference-option" onclick="togglePreference(this)" data-value="problem_solving">
+                                <i class="fas fa-puzzle-piece"></i>
+                                <span>Problem Solving</span>
+                            </div>
+                            <div class="preference-option" onclick="togglePreference(this)" data-value="code_review">
+                                <i class="fas fa-code-branch"></i>
+                                <span>Code Review</span>
+                            </div>
+                            <div class="preference-option" onclick="togglePreference(this)" data-value="learning_concepts">
+                                <i class="fas fa-book-reader"></i>
+                                <span>Learning Concepts</span>
+                            </div>
+                            <div class="preference-option" onclick="togglePreference(this)" data-value="project_planning">
+                                <i class="fas fa-project-diagram"></i>
+                                <span>Project Planning</span>
+                            </div>
+                            <div class="preference-option" onclick="togglePreference(this)" data-value="debugging">
+                                <i class="fas fa-bug"></i>
+                                <span>Debugging</span>
+                            </div>
+                            <div class="preference-option" onclick="togglePreference(this)" data-value="brainstorming">
+                                <i class="fas fa-lightbulb"></i>
+                                <span>Brainstorming</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="setup-step" data-step="7">
+                    <div class="step-content-card">
+                        <div class="step-icon">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div class="step-title">Communication Style</div>
+                        <div class="step-description">How would you like Gemi to communicate with you?</div>
+                        <div class="preference-options">
+                            <div class="preference-option" onclick="togglePreference(this)" data-value="detailed">
+                                <i class="fas fa-book"></i>
+                                <span>Detailed</span>
+                            </div>
+                            <div class="preference-option" onclick="togglePreference(this)" data-value="concise">
+                                <i class="fas fa-list"></i>
+                                <span>Concise</span>
+                            </div>
+                            <div class="preference-option" onclick="togglePreference(this)" data-value="technical">
+                                <i class="fas fa-microchip"></i>
+                                <span>Technical</span>
+                            </div>
+                            <div class="preference-option" onclick="togglePreference(this)" data-value="casual">
+                                <i class="fas fa-comments"></i>
+                                <span>Casual</span>
+                            </div>
+                            <div class="preference-option" onclick="togglePreference(this)" data-value="professional">
+                                <i class="fas fa-user-tie"></i>
+                                <span>Professional</span>
+                            </div>
+                            <div class="preference-option" onclick="togglePreference(this)" data-value="educational">
+                                <i class="fas fa-chalkboard-teacher"></i>
+                                <span>Educational</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="setup-step" data-step="8">
+                    <div class="step-content-card">
+                        <div class="step-icon">
+                            <i class="fas fa-sliders-h"></i>
+                        </div>
+                        <div class="step-title">Response Preferences</div>
+                        <div class="step-description">How would you like Gemi to structure responses?</div>
+                        <div class="preference-options">
+                            <div class="preference-option" onclick="togglePreference(this)" data-value="step_by_step">
+                                <i class="fas fa-list-ol"></i>
+                                <span>Step by Step</span>
+                            </div>
+                            <div class="preference-option" onclick="togglePreference(this)" data-value="examples">
+                                <i class="fas fa-file-code"></i>
+                                <span>With Examples</span>
+                            </div>
+                            <div class="preference-option" onclick="togglePreference(this)" data-value="explanations">
+                                <i class="fas fa-info-circle"></i>
+                                <span>With Explanations</span>
+                            </div>
+                            <div class="preference-option" onclick="togglePreference(this)" data-value="analogies">
+                                <i class="fas fa-equals"></i>
+                                <span>With Analogies</span>
+                            </div>
+                            <div class="preference-option" onclick="togglePreference(this)" data-value="best_practices">
+                                <i class="fas fa-check-double"></i>
+                                <span>Best Practices</span>
+                            </div>
+                            <div class="preference-option" onclick="togglePreference(this)" data-value="alternatives">
+                                <i class="fas fa-random"></i>
+                                <span>With Alternatives</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="setup-step" data-step="9">
+                    <div class="step-content-card">
+                        <div class="step-icon">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <div class="step-title">Learning Style</div>
+                        <div class="step-description">How do you prefer to learn and understand new concepts?</div>
+                        <div class="preference-options">
+                            <div class="preference-option" onclick="togglePreference(this)" data-value="visual">
+                                <i class="fas fa-eye"></i>
+                                <span>Visual</span>
+                            </div>
+                            <div class="preference-option" onclick="togglePreference(this)" data-value="practical">
+                                <i class="fas fa-hammer"></i>
+                                <span>Practical</span>
+                            </div>
+                            <div class="preference-option" onclick="togglePreference(this)" data-value="theoretical">
+                                <i class="fas fa-book-open"></i>
+                                <span>Theoretical</span>
+                            </div>
+                            <div class="preference-option" onclick="togglePreference(this)" data-value="interactive">
+                                <i class="fas fa-hands-helping"></i>
+                                <span>Interactive</span>
+                            </div>
+                            <div class="preference-option" onclick="togglePreference(this)" data-value="analytical">
+                                <i class="fas fa-chart-line"></i>
+                                <span>Analytical</span>
+                            </div>
+                            <div class="preference-option" onclick="togglePreference(this)" data-value="experimental">
+                                <i class="fas fa-flask"></i>
+                                <span>Experimental</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="setup-step" data-step="10">
+                    <div class="step-content-card">
+                        <div class="step-icon">
+                            <i class="fas fa-tools"></i>
+                        </div>
+                        <div class="step-title">Development Tools</div>
+                        <div class="step-description">Which development tools and technologies do you commonly use?</div>
+                        <div class="preference-options">
+                            <div class="preference-option" onclick="togglePreference(this)" data-value="vs_code">
+                                <i class="fas fa-code"></i>
+                                <span>VS Code</span>
+                            </div>
+                            <div class="preference-option" onclick="togglePreference(this)" data-value="git">
+                                <i class="fab fa-git-alt"></i>
+                                <span>Git</span>
+                            </div>
+                            <div class="preference-option" onclick="togglePreference(this)" data-value="docker">
+                                <i class="fab fa-docker"></i>
+                                <span>Docker</span>
+                            </div>
+                            <div class="preference-option" onclick="togglePreference(this)" data-value="terminal">
+                                <i class="fas fa-terminal"></i>
+                                <span>Terminal</span>
+                            </div>
+                            <div class="preference-option" onclick="togglePreference(this)" data-value="browser_tools">
+                                <i class="fas fa-browser"></i>
+                                <span>Browser Tools</span>
+                            </div>
+                            <div class="preference-option" onclick="togglePreference(this)" data-value="cloud">
+                                <i class="fas fa-cloud"></i>
+                                <span>Cloud Services</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="setup-step" data-step="11">
+                    <div class="step-content-card">
+                        <div class="step-icon">
+                            <i class="fas fa-flag-checkered"></i>
+                        </div>
+                        <div class="step-title">Almost Done!</div>
+                        <div class="step-description">
+                            Great! Your preferences have been saved. Gemi will use these settings to provide you with the most relevant and helpful responses. You can always adjust these settings later from the sidebar menu.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="setup-buttons" id="setupButtons">
+                    <button class="setup-button secondary" onclick="prevStep()">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </button>
+                    <button class="setup-button primary" onclick="nextStep()">
+                        Continue <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+
+                <div class="setup-progress">
+                    <div class="progress-dot active"></div>
+                    <div class="progress-dot"></div>
+                    <div class="progress-dot"></div>
+                    <div class="progress-dot"></div>
+                    <div class="progress-dot"></div>
+                    <div class="progress-dot"></div>
+                    <div class="progress-dot"></div>
+                    <div class="progress-dot"></div>
+                    <div class="progress-dot"></div>
+                    <div class="progress-dot"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <div class="modal-overlay" id="modalOverlay">
         <div class="modal">
             <div class="modal-title" id="modalTitle"></div>
@@ -1729,12 +2837,6 @@
                         <i class="fas fa-message"></i>
                         <span></span>
                     </div>
-                    <button class="sidebar-action-btn" id="openCommands" title="Open command palette (Ctrl+K)">
-                        <i class="fas fa-search"></i>
-                    </button>
-                    <button class="sidebar-action-btn" id="exportChat" title="Export chat">
-                        <i class="fas fa-download"></i>
-                    </button>
                     <button class="sidebar-action-btn" id="clearChat" title="Clear chat">
                         <i class="fas fa-trash"></i>
                     </button>
@@ -1746,6 +2848,9 @@
             <button id="stopGenerate" class="stop-generate">
                 <i class="fas fa-stop"></i>
                 Stop generating
+            </button>
+            <button id="scrollBottomBtn" class="scroll-bottom-btn" title="Scroll to bottom">
+                <i class="fas fa-arrow-down"></i>
             </button>
             <div class="input-container">
                 <div id="imagePreview" class="image-preview"></div>
@@ -1765,13 +2870,6 @@
                     </button>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <div class="command-palette" id="commandPalette">
-        <input type="text" class="command-input" id="commandInput" placeholder="Type a command or search...">
-        <div class="command-list" id="commandList">
-            <!-- Command items will be added here -->
         </div>
     </div>
 
@@ -1895,12 +2993,11 @@
 
         // Toggle theme
         function toggleTheme() {
-            isDarkTheme = !isDarkTheme;
             document.documentElement.style.setProperty('--background-dark', isDarkTheme ? '#000000' : '#ffffff');
             document.documentElement.style.setProperty('--surface-dark', isDarkTheme ? '#111111' : '#f5f5f5');
             document.documentElement.style.setProperty('--text-primary', isDarkTheme ? '#ffffff' : '#000000');
+            document.documentElement.style.setProperty('--text-primary-rgb', isDarkTheme ? '255, 255, 255' : '0, 0, 0');
             document.documentElement.style.setProperty('--border-color', isDarkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.2)');
-            document.documentElement.style.setProperty('--icon-color', isDarkTheme ? '#ffffff' : '#000000');
             document.getElementById('toggleTheme').innerHTML = `<i class="fas fa-${isDarkTheme ? 'sun' : 'moon'}"></i>`;
         }
 
@@ -2269,6 +3366,86 @@
             return !chatHistory.length || !currentChatId;
         }
 
+        let isAutoScrolling = true;
+        let isUserScrolling = false;
+        let scrollTimeout;
+        let lastScrollTop = 0;  // Add this to track scroll direction
+
+        function smoothScrollToBottom() {
+            const chatHistoryDiv = document.getElementById('chatHistory');
+            const scrollBottomBtn = document.getElementById('scrollBottomBtn');
+            
+            if (!isAutoScrolling) {
+                scrollBottomBtn.classList.add('visible');
+                return;
+            }
+
+            chatHistoryDiv.scrollTo({
+                top: chatHistoryDiv.scrollHeight,
+                behavior: 'smooth'
+            });
+            scrollBottomBtn.classList.remove('visible');
+        }
+
+        // Add scroll event listener to chat history
+        document.getElementById('chatHistory').addEventListener('scroll', function(e) {
+            const chatHistoryDiv = this;
+            const scrollBottomBtn = document.getElementById('scrollBottomBtn');
+            
+            // Get current scroll position
+            const currentScrollTop = chatHistoryDiv.scrollTop;
+            const isScrollingUp = currentScrollTop < lastScrollTop;
+            const isAtBottom = chatHistoryDiv.scrollHeight - currentScrollTop - chatHistoryDiv.clientHeight < 20;  // Reduced threshold
+            
+            // Immediately show button when scrolling up
+            if (isScrollingUp && !isAtBottom) {
+                isAutoScrolling = false;
+                scrollBottomBtn.classList.add('visible');
+            }
+            
+            // Update last scroll position
+            lastScrollTop = currentScrollTop;
+            
+            // Clear existing timeout
+            clearTimeout(scrollTimeout);
+            
+            // Set a new timeout for fine-tuning the visibility
+            scrollTimeout = setTimeout(() => {
+                if (isAtBottom) {
+                    isAutoScrolling = true;
+                    scrollBottomBtn.classList.remove('visible');
+                } else if (!isUserScrolling) {
+                    isAutoScrolling = false;
+                    scrollBottomBtn.classList.add('visible');
+                }
+            }, 100);  // Reduced delay
+        }, { passive: true });  // Add passive flag for better performance
+
+        // Add wheel event listener for immediate response to mouse wheel
+        document.getElementById('chatHistory').addEventListener('wheel', function(e) {
+            if (e.deltaY < 0) {  // Scrolling up
+                const chatHistoryDiv = this;
+                const isAtBottom = chatHistoryDiv.scrollHeight - chatHistoryDiv.scrollTop - chatHistoryDiv.clientHeight < 20;
+                
+                if (!isAtBottom) {
+                    isAutoScrolling = false;
+                    document.getElementById('scrollBottomBtn').classList.add('visible');
+                }
+            }
+        }, { passive: true });
+
+        // Add click handler for scroll button
+        document.getElementById('scrollBottomBtn').addEventListener('click', function() {
+            const chatHistoryDiv = document.getElementById('chatHistory');
+            isAutoScrolling = true;
+            chatHistoryDiv.scrollTo({
+                top: chatHistoryDiv.scrollHeight,
+                behavior: 'smooth'
+            });
+            this.classList.remove('visible');
+        });
+
+        // Modify the displayChatHistory function to use the new scroll behavior
         function displayChatHistory() {
             const chatHistoryDiv = document.getElementById('chatHistory');
             chatHistoryDiv.innerHTML = '';
@@ -2397,13 +3574,23 @@
             smoothScrollToBottom();
         }
 
-        function smoothScrollToBottom() {
-            const chatHistoryDiv = document.getElementById('chatHistory');
-            chatHistoryDiv.scrollTo({
-                top: chatHistoryDiv.scrollHeight,
-                behavior: 'smooth'
-            });
-        }
+        // Add mousedown and mouseup event listeners to detect user scrolling
+        document.getElementById('chatHistory').addEventListener('mousedown', function() {
+            isUserScrolling = true;
+        });
+
+        document.addEventListener('mouseup', function() {
+            isUserScrolling = false;
+        });
+
+        // Add touch event listeners for mobile
+        document.getElementById('chatHistory').addEventListener('touchstart', function() {
+            isUserScrolling = true;
+        });
+
+        document.addEventListener('touchend', function() {
+            isUserScrolling = false;
+        });
 
         async function generateContent(isRegeneration = false) {
             if (isGenerating) return;
@@ -2952,8 +4139,37 @@
             if (emptyChat) {
                 currentChatId = emptyChat.id;
                 chatHistory = [];
-                // Reset to default AI settings
-                SYSTEM_INSTRUCTIONS = DEFAULT_SYSTEM_INSTRUCTIONS;
+                
+                // Get user preferences and update system instructions
+                const savedPrefs = localStorage.getItem('gemi_user_preferences');
+                if (savedPrefs) {
+                    const prefs = JSON.parse(savedPrefs);
+                    let customInstructions = DEFAULT_SYSTEM_INSTRUCTIONS;
+                    
+                    // Add communication style preferences
+                    if (prefs.communicationStyle.includes('detailed')) {
+                        customInstructions += '\nProvide detailed and comprehensive explanations.';
+                    }
+                    if (prefs.communicationStyle.includes('concise')) {
+                        customInstructions += '\nFocus on brevity and clarity in responses.';
+                    }
+                    if (prefs.communicationStyle.includes('technical')) {
+                        customInstructions += '\nUse technical terminology and in-depth explanations.';
+                    }
+                    if (prefs.communicationStyle.includes('casual')) {
+                        customInstructions += '\nMaintain a friendly and conversational tone.';
+                    }
+                    
+                    // Add user context
+                    customInstructions += `\n\nUser Context:\nName: ${prefs.name}\nRole: ${prefs.role}\nInterests: ${prefs.interests.join(', ')}`;
+                    
+                    SYSTEM_INSTRUCTIONS = customInstructions;
+                    emptyChat.systemInstructions = customInstructions;
+                } else {
+                    SYSTEM_INSTRUCTIONS = DEFAULT_SYSTEM_INSTRUCTIONS;
+                    emptyChat.systemInstructions = DEFAULT_SYSTEM_INSTRUCTIONS;
+                }
+                
                 updateCustomAIInfo();
                 displayChatHistory();
                 renderChatList();
@@ -2967,18 +4183,45 @@
             }
 
             const chatId = `chat_${Date.now()}`;
+            
+            // Get user preferences and create custom instructions
+            const savedPrefs = localStorage.getItem('gemi_user_preferences');
+            let systemInstructions = DEFAULT_SYSTEM_INSTRUCTIONS;
+            
+            if (savedPrefs) {
+                const prefs = JSON.parse(savedPrefs);
+                // Add communication style preferences
+                if (prefs.communicationStyle.includes('detailed')) {
+                    systemInstructions += '\nProvide detailed and comprehensive explanations.';
+                }
+                if (prefs.communicationStyle.includes('concise')) {
+                    systemInstructions += '\nFocus on brevity and clarity in responses.';
+                }
+                if (prefs.communicationStyle.includes('technical')) {
+                    systemInstructions += '\nUse technical terminology and in-depth explanations.';
+                }
+                if (prefs.communicationStyle.includes('casual')) {
+                    systemInstructions += '\nMaintain a friendly and conversational tone.';
+                }
+                
+                // Add user context
+                systemInstructions += `\n\nUser Context:\nName: ${prefs.name}\nRole: ${prefs.role}\nInterests: ${prefs.interests.join(', ')}`;
+            }
+            
             const chat = {
                 id: chatId,
                 title: 'New Chat',
                 messages: [],
                 createdAt: new Date().toISOString(),
-                systemInstructions: DEFAULT_SYSTEM_INSTRUCTIONS  // Always use default instructions for new chats
+                systemInstructions: systemInstructions,
+                pinned: false
             };
+            
             chats.unshift(chat);
             currentChatId = chatId;
             chatHistory = [];
-            // Reset to default AI settings
-            SYSTEM_INSTRUCTIONS = DEFAULT_SYSTEM_INSTRUCTIONS;
+            SYSTEM_INSTRUCTIONS = systemInstructions;
+            
             // Clear input and images
             document.getElementById('prompt').value = '';
             document.getElementById('imagePreview').innerHTML = '';
@@ -3004,7 +4247,17 @@
             const chatList = document.getElementById('chatList');
             chatList.innerHTML = '';
             
-            chats.forEach(chat => {
+            // Sort chats: pinned first, then by timestamp
+            const sortedChats = [...chats].sort((a, b) => {
+                if (a.pinned && !b.pinned) return -1;
+                if (!a.pinned && b.pinned) return 1;
+                
+                const aTime = a.messages.length > 0 ? new Date(a.messages[a.messages.length - 1].timestamp || 0) : new Date(0);
+                const bTime = b.messages.length > 0 ? new Date(b.messages[b.messages.length - 1].timestamp || 0) : new Date(0);
+                return bTime - aTime;
+            });
+            
+            sortedChats.forEach((chat) => {
                 const chatItem = document.createElement('div');
                 chatItem.className = `chat-item ${chat.id === currentChatId ? 'active' : ''} ${isGenerating && chat.id !== currentChatId ? 'disabled' : ''}`;
                 chatItem.setAttribute('data-chat-id', chat.id);
@@ -3026,12 +4279,33 @@
                 const lastMessage = chat.messages[chat.messages.length - 1];
                 preview.textContent = lastMessage ? lastMessage.parts[lastMessage.parts.length - 1].text.slice(0, 50) + '...' : 'No messages';
                 
+                // Add pin button
+                const pinButton = document.createElement('button');
+                pinButton.className = `chat-item-pin ${chat.pinned ? 'pinned' : ''}`;
+                pinButton.innerHTML = `<i class="fas fa-thumbtack"></i>`;
+                pinButton.setAttribute('title', chat.pinned ? 'Unpin chat' : 'Pin chat');
+                pinButton.onclick = (e) => {
+                    e.stopPropagation();
+                    togglePinChat(chat.id);
+                };
+                
                 content.appendChild(title);
                 content.appendChild(preview);
                 chatItem.appendChild(icon);
                 chatItem.appendChild(content);
+                chatItem.appendChild(pinButton);
                 chatList.appendChild(chatItem);
             });
+        }
+
+        function togglePinChat(chatId) {
+            const chatIndex = chats.findIndex(c => c.id === chatId);
+            if (chatIndex !== -1) {
+                chats[chatIndex].pinned = !chats[chatIndex].pinned;
+                saveChats();
+                renderChatList();
+                showNotification(chats[chatIndex].pinned ? 'Chat pinned' : 'Chat unpinned');
+            }
         }
 
         // Load a specific chat
@@ -3118,10 +4392,34 @@
                         chatHistory = [];
                         const chatIndex = chats.findIndex(c => c.id === currentChatId);
                         if (chatIndex !== -1) {
+                            // Get user preferences and create custom instructions
+                            const savedPrefs = localStorage.getItem('gemi_user_preferences');
+                            let systemInstructions = DEFAULT_SYSTEM_INSTRUCTIONS;
+                            
+                            if (savedPrefs) {
+                                const prefs = JSON.parse(savedPrefs);
+                                // Add communication style preferences
+                                if (prefs.communicationStyle.includes('detailed')) {
+                                    systemInstructions += '\nProvide detailed and comprehensive explanations.';
+                                }
+                                if (prefs.communicationStyle.includes('concise')) {
+                                    systemInstructions += '\nFocus on brevity and clarity in responses.';
+                                }
+                                if (prefs.communicationStyle.includes('technical')) {
+                                    systemInstructions += '\nUse technical terminology and in-depth explanations.';
+                                }
+                                if (prefs.communicationStyle.includes('casual')) {
+                                    systemInstructions += '\nMaintain a friendly and conversational tone.';
+                                }
+                                
+                                // Add user context
+                                systemInstructions += `\n\nUser Context:\nName: ${prefs.name}\nRole: ${prefs.role}\nInterests: ${prefs.interests.join(', ')}`;
+                            }
+
                             chats[chatIndex].messages = [];
                             chats[chatIndex].title = 'New Chat';
-                            chats[chatIndex].systemInstructions = DEFAULT_SYSTEM_INSTRUCTIONS; // Reset to default instructions
-                            SYSTEM_INSTRUCTIONS = DEFAULT_SYSTEM_INSTRUCTIONS;
+                            chats[chatIndex].systemInstructions = systemInstructions;
+                            SYSTEM_INSTRUCTIONS = systemInstructions;
                             updateCustomAIInfo();
                             updateChatListAndUI();
                         }
@@ -3149,7 +4447,7 @@
                     if (chatIndex !== -1) {
                         chats.splice(chatIndex, 1);
                         
-                        // Find the next available chat to load
+                        // Find the next available chat to load or create a new one with user preferences
                         if (chats.length > 0) {
                             // Try to load the chat that's now at the same index
                             // If not available, load the last chat
@@ -3159,8 +4457,44 @@
                             SYSTEM_INSTRUCTIONS = chats[nextChatIndex].systemInstructions || DEFAULT_SYSTEM_INSTRUCTIONS;
                             document.getElementById('currentChatTitle').textContent = chats[nextChatIndex].title;
                         } else {
-                            // If no chats left, create a new one with default settings
-                            createNewChat();
+                            // Create a new chat with user preferences
+                            const savedPrefs = localStorage.getItem('gemi_user_preferences');
+                            let systemInstructions = DEFAULT_SYSTEM_INSTRUCTIONS;
+                            
+                            if (savedPrefs) {
+                                const prefs = JSON.parse(savedPrefs);
+                                // Add communication style preferences
+                                if (prefs.communicationStyle.includes('detailed')) {
+                                    systemInstructions += '\nProvide detailed and comprehensive explanations.';
+                                }
+                                if (prefs.communicationStyle.includes('concise')) {
+                                    systemInstructions += '\nFocus on brevity and clarity in responses.';
+                                }
+                                if (prefs.communicationStyle.includes('technical')) {
+                                    systemInstructions += '\nUse technical terminology and in-depth explanations.';
+                                }
+                                if (prefs.communicationStyle.includes('casual')) {
+                                    systemInstructions += '\nMaintain a friendly and conversational tone.';
+                                }
+                                
+                                // Add user context
+                                systemInstructions += `\n\nUser Context:\nName: ${prefs.name}\nRole: ${prefs.role}\nInterests: ${prefs.interests.join(', ')}`;
+                            }
+
+                            const newChat = {
+                                id: `chat_${Date.now()}`,
+                                title: 'New Chat',
+                                messages: [],
+                                createdAt: new Date().toISOString(),
+                                systemInstructions: systemInstructions,
+                                pinned: false
+                            };
+                            
+                            chats.push(newChat);
+                            currentChatId = newChat.id;
+                            chatHistory = [];
+                            SYSTEM_INSTRUCTIONS = systemInstructions;
+                            document.getElementById('currentChatTitle').textContent = 'New Chat';
                         }
                         
                         // Clear input and images
@@ -3290,33 +4624,9 @@
         // Event listeners
         document.getElementById('toggleTheme').onclick = toggleTheme;
         document.getElementById('toggleSidebar').onclick = toggleSidebar;
-        document.getElementById('openCommands').onclick = showCommandPalette;
-        document.getElementById('exportChat').onclick = () => {
-            showModal(
-                'Export Chat',
-                'Choose the format to export your chat:',
-                'Export as Markdown',
-                'Export as JSON',
-                () => exportChat('markdown'),
-                () => exportChat('json')
-            );
-        };
         document.getElementById('clearChat').onclick = clearChat;
         document.querySelector('.new-chat-btn').onclick = createNewChat;
         document.getElementById('stopGenerate').onclick = stopGeneration;
-
-        document.getElementById('commandInput').addEventListener('input', (e) => {
-            renderCommands(e.target.value);
-        });
-
-        document.addEventListener('keydown', (e) => {
-            if (e.ctrlKey && e.key === 'k') {
-                e.preventDefault();
-                showCommandPalette();
-            } else if (e.key === 'Escape') {
-                hideCommandPalette();
-            }
-        });
 
         // Modify existing generateContent function
         const originalGenerateContent = generateContent;
@@ -3588,7 +4898,8 @@
                 title: `Chat with ${ai.name}`,
                 messages: [],
                 createdAt: new Date().toISOString(),
-                systemInstructions: ai.instructions
+                systemInstructions: ai.instructions,
+                pinned: false  // Add pinned property
             };
             
             chats.unshift(chat);
@@ -3703,17 +5014,15 @@
 
         // Remove the format buttons and message preview references
         const keyboardShortcuts = {
-            'ctrl+k': { action: showCommandPalette, description: 'Open command palette' },
             'ctrl+n': { action: createNewChat, description: 'Create new chat' },
             'ctrl+i': { action: () => document.getElementById('imageInput').click(), description: 'Upload image' },
             'ctrl+enter': { action: generateContent, description: 'Send message' },
             'ctrl+b': { action: toggleSidebar, description: 'Toggle sidebar' },
             'ctrl+/': { action: showKeyboardShortcuts, description: 'Show keyboard shortcuts' },
             'esc': { action: () => {
-                hideCommandPalette();
                 document.getElementById('prompt').value = '';
                 updateSendButtonState();
-            }, description: 'Clear input/Close modals' }
+            }, description: 'Clear input' }
         };
 
         // Add keyboard shortcuts modal
@@ -3924,7 +5233,7 @@
                 file.type.startsWith('image/')
             );
 
-            if (files.length > 0) {
+            if (files.length >0) {
                 await handleImageFiles(files);
             }
         });
@@ -3934,7 +5243,7 @@
             const items = Array.from(e.clipboardData.items);
             const imageItems = items.filter(item => item.type.startsWith('image/'));
             
-            if (imageItems.length > 0) {
+            if (imageItems.length >0) {
                 e.preventDefault();
                 const files = imageItems.map(item => item.getAsFile());
                 await handleImageFiles(files);
@@ -3986,6 +5295,570 @@
                     }
                 }
             }
+        }
+
+        // Add splash screen logic at the start of the script
+        function showIntro() {
+            if (!localStorage.getItem('gemi_visited')) {
+                const splashScreen = document.getElementById('splashScreen');
+                const setupSteps = document.getElementById('setupSteps');
+                
+                // Show initial splash for 3 seconds
+                setTimeout(() => {
+                    // Fade out the initial splash content
+                    const splashLogo = document.querySelector('.splash-logo');
+                    const splashTitle = document.querySelector('.splash-title');
+                    const splashSubtitle = document.querySelector('.splash-subtitle');
+                    
+                    splashLogo.style.opacity = '0';
+                    splashTitle.style.opacity = '0';
+                    splashSubtitle.style.opacity = '0';
+                    
+                    // Show setup steps after fade out
+                    setTimeout(() => {
+                        splashLogo.style.display = 'none';
+                        splashTitle.style.display = 'none';
+                        splashSubtitle.style.display = 'none';
+                        
+                        setupSteps.style.display = 'flex';
+                        setTimeout(() => {
+                            setupSteps.style.opacity = '1';
+                            updateStep(1);
+                        }, 100);
+                    }, 500);
+                }, 3000);
+            } else {
+                // Remove splash screen immediately if not first visit
+                const splashScreen = document.getElementById('splashScreen');
+                splashScreen.remove();
+            }
+        }
+
+        // Update the setup steps initial styles
+        const setupStyles = document.createElement('style');
+        setupStyles.textContent = `
+            .setup-steps {
+                display: none;
+                flex-direction: column;
+                gap: 1rem;
+                opacity: 0;
+                transition: opacity 0.5s ease;
+            }
+
+            .splash-logo,
+            .splash-title,
+            .splash-subtitle {
+                transition: opacity 0.3s ease;
+            }
+        `;
+        document.head.appendChild(setupStyles);
+
+        // Add validation and loading state to the setup buttons
+        function nextStep() {
+            if (validateStep(currentStep)) {
+                const currentStepEl = document.querySelector(`.setup-step[data-step="${currentStep}"]`);
+                const nextStepEl = document.querySelector(`.setup-step[data-step="${currentStep + 1}"]`);
+                
+                if (currentStepEl && nextStepEl && currentStep < totalSteps) {
+                    currentStepEl.classList.add('slide-out');
+                    
+                    setTimeout(() => {
+                        currentStepEl.style.display = 'none';
+                        currentStepEl.classList.remove('active', 'slide-out');
+                        nextStepEl.style.display = 'block';
+                        nextStepEl.classList.add('active', 'slide-in');
+                        
+                        setTimeout(() => {
+                            nextStepEl.classList.remove('slide-in');
+                        }, 500);
+                        
+                        currentStep++;
+                        updateProgress();
+                        validateStep(currentStep);
+                    }, 500);
+                }
+            }
+        }
+
+        // Update the completeSetup function
+        function completeSetup() {
+            const button = document.querySelector('.setup-button.primary');
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Setting up...';
+            button.disabled = true;
+
+            // Save user preferences
+            if (userPreferences.saveInfo) {
+                localStorage.setItem('gemi_user_preferences', JSON.stringify(userPreferences));
+            }
+            
+            // Update system instructions based on preferences
+            updateSystemInstructions();
+            
+            // Complete setup with a loading animation
+            setTimeout(() => {
+                const splashScreen = document.getElementById('splashScreen');
+                splashScreen.style.opacity = '0';
+                setTimeout(() => {
+                    splashScreen.remove();
+                    localStorage.setItem('gemi_visited', 'true');
+                    
+                    // Create initial chat with user preferences
+                    createNewChat();
+                }, 500);
+            }, 1000);
+        }
+
+        // Add loading spinner styles
+        const spinnerStyles = document.createElement('style');
+        spinnerStyles.textContent = `
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+
+            .fa-spin {
+                animation: spin 1s linear infinite;
+            }
+
+            .setup-button:disabled {
+                opacity: 0.7;
+                cursor: not-allowed;
+            }
+        `;
+        document.head.appendChild(spinnerStyles);
+
+        // ... rest of existing code ...
+        let currentStep = 1;
+        const totalSteps = 11;
+
+        function updateStep(step) {
+            document.querySelectorAll('.setup-step').forEach(s => {
+                s.classList.remove('active');
+            });
+            document.querySelector(`.setup-step[data-step="${step}"]`).classList.add('active');
+            
+            // Update progress dots
+            document.querySelectorAll('.progress-dot').forEach((dot, index) => {
+                dot.classList.toggle('active', index < step);
+            });
+        }
+
+        function prevStep() {
+            if (currentStep > 1) {
+                const currentStepEl = document.querySelector(`.setup-step[data-step="${currentStep}"]`);
+                const prevStepEl = document.querySelector(`.setup-step[data-step="${currentStep - 1}"]`);
+                
+                if (currentStepEl && prevStepEl) {
+                    currentStepEl.classList.add('slide-out');
+                    
+                    setTimeout(() => {
+                        currentStepEl.style.display = 'none';
+                        currentStepEl.classList.remove('active', 'slide-out');
+                        prevStepEl.style.display = 'block';
+                        prevStepEl.classList.add('active', 'slide-in');
+                        
+                        setTimeout(() => {
+                            prevStepEl.classList.remove('slide-in');
+                        }, 500);
+                        
+                        currentStep--;
+                        updateProgress();
+                        validateStep(currentStep);
+                    }, 500);
+                }
+            }
+        }
+
+        function updateButtons() {
+            const backButton = document.querySelector('#setupButtons .setup-button.secondary');
+            const continueButton = document.querySelector('#setupButtons .setup-button.primary');
+            
+            // Show/hide back button based on current step
+            backButton.style.display = currentStep === 1 ? 'none' : 'flex';
+            
+            // Update continue button text and functionality for final step
+            if (currentStep === totalSteps) {
+                continueButton.innerHTML = '<i class="fas fa-check"></i> Complete Setup';
+                continueButton.onclick = () => {
+                    completeSetup();
+                    return false;
+                };
+            } else {
+                continueButton.innerHTML = 'Continue <i class="fas fa-arrow-right"></i>';
+                continueButton.onclick = () => {
+                    nextStep();
+                    return false;
+                };
+            }
+            
+            // Validate current step
+            validateStep(currentStep);
+        }
+
+        // Call showIntro when the page loads
+        document.addEventListener('DOMContentLoaded', showIntro);
+
+        // Add styles for setup transitions
+        const setupTransitionStyles = document.createElement('style');
+        setupTransitionStyles.textContent = `
+            .splash-logo, .splash-title, .splash-subtitle {
+                transition: opacity 0.5s ease;
+            }
+            
+            .setup-steps {
+                opacity: 0;
+                transition: opacity 0.5s ease;
+            }
+            
+            .setup-step {
+                display: none;
+                opacity: 0;
+                transition: opacity 0.3s ease;
+            }
+            
+            .setup-step.active {
+                display: block;
+                opacity: 1;
+            }
+        `;
+        document.head.appendChild(setupTransitionStyles);
+
+        let userPreferences = {
+            name: '',
+            role: '',
+            experience: '',
+            goals: '',
+            theme: 'dark',
+            enableAnimations: true,
+            interests: [],
+            preferences: [],
+            communicationStyle: [],
+            responsePreferences: [],
+            learningStyle: [],
+            developmentTools: [],
+            saveInfo: false
+        };
+
+        function togglePreference(element) {
+            element.classList.toggle('selected');
+            const value = element.getAttribute('data-value');
+            const step = element.closest('.setup-step').getAttribute('data-step');
+            let category;
+            
+            switch(step) {
+                case '5':
+                    category = 'interests';
+                    break;
+                case '6':
+                    category = 'preferences';
+                    break;
+                case '7':
+                    category = 'communicationStyle';
+                    break;
+                case '8':
+                    category = 'responsePreferences';
+                    break;
+                case '9':
+                    category = 'learningStyle';
+                    break;
+                case '10':
+                    category = 'developmentTools';
+                    break;
+                default:
+                    return;
+            }
+            
+            if (element.classList.contains('selected')) {
+                if (!userPreferences[category].includes(value)) {
+                    userPreferences[category].push(value);
+                }
+            } else {
+                userPreferences[category] = userPreferences[category].filter(v => v !== value);
+            }
+            
+            validateStep(parseInt(step));
+        }
+
+        function validateStep(step) {
+            let isValid = true;
+            const continueButton = document.querySelector('#setupButtons .setup-button.primary');
+
+            switch(parseInt(step)) {
+                case 1:
+                    isValid = true;  // First step is always valid
+                    break;
+                case 2:
+                    const name = document.getElementById('userName').value.trim();
+                    const role = document.getElementById('userRole').value.trim();
+                    isValid = name && role;
+                    
+                    if (isValid) {
+                        userPreferences.name = name;
+                        userPreferences.role = role;
+                    }
+                    break;
+                case 3:
+                    const experience = document.getElementById('userExperience').value.trim();
+                    const goals = document.getElementById('userGoals').value.trim();
+                    isValid = experience && goals;
+                    
+                    if (isValid) {
+                        userPreferences.experience = experience;
+                        userPreferences.goals = goals;
+                    }
+                    break;
+                case 4:
+                    isValid = true;  // Theme selection is always valid
+                    break;
+                case 5:
+                    isValid = userPreferences.interests.length > 0;
+                    break;
+                case 6:
+                    isValid = userPreferences.preferences.length > 0;
+                    break;
+                case 7:
+                    isValid = userPreferences.communicationStyle.length > 0;
+                    break;
+                case 8:
+                    isValid = userPreferences.responsePreferences.length > 0;
+                    break;
+                case 9:
+                    isValid = userPreferences.learningStyle.length > 0;
+                    break;
+                case 10:
+                    isValid = userPreferences.developmentTools.length > 0;
+                    break;
+                case 11:
+                    isValid = true;  // Final step is always valid
+                    break;
+            }
+
+            if (continueButton) {
+                continueButton.disabled = !isValid;
+            }
+            return isValid;
+        }
+
+        // Add input event listeners for real-time validation
+        document.addEventListener('DOMContentLoaded', () => {
+            // Input validation for text fields
+            const inputs = ['userName', 'userRole', 'userExperience', 'userGoals'];
+            inputs.forEach(id => {
+                const input = document.getElementById(id);
+                if (input) {
+                    input.addEventListener('input', () => {
+                        validateStep(currentStep);
+                    });
+                }
+            });
+
+            // Initial validation for first step
+            validateStep(1);
+        });
+
+        function nextStep() {
+            if (validateStep(currentStep)) {
+                if (currentStep === totalSteps) {
+                    completeSetup();
+                    return;
+                }
+                
+                const currentStepEl = document.querySelector(`.setup-step[data-step="${currentStep}"]`);
+                const nextStepEl = document.querySelector(`.setup-step[data-step="${currentStep + 1}"]`);
+                
+                if (currentStepEl && nextStepEl && currentStep < totalSteps) {
+                    currentStepEl.classList.add('slide-out');
+                    
+                    setTimeout(() => {
+                        currentStepEl.style.display = 'none';
+                        currentStepEl.classList.remove('active', 'slide-out');
+                        nextStepEl.style.display = 'block';
+                        nextStepEl.classList.add('active', 'slide-in');
+                        
+                        setTimeout(() => {
+                            nextStepEl.classList.remove('slide-in');
+                        }, 500);
+                        
+                        currentStep++;
+                        updateProgress();
+                        updateButtons();
+                        validateStep(currentStep);
+                    }, 500);
+                }
+            }
+        }
+
+        function prevStep() {
+            if (currentStep > 1) {
+                const currentStepEl = document.querySelector(`.setup-step[data-step="${currentStep}"]`);
+                const prevStepEl = document.querySelector(`.setup-step[data-step="${currentStep - 1}"]`);
+                
+                if (currentStepEl && prevStepEl) {
+                    currentStepEl.classList.add('slide-out');
+                    
+                    setTimeout(() => {
+                        currentStepEl.style.display = 'none';
+                        currentStepEl.classList.remove('active', 'slide-out');
+                        prevStepEl.style.display = 'block';
+                        prevStepEl.classList.add('active', 'slide-in');
+                        
+                        setTimeout(() => {
+                            prevStepEl.classList.remove('slide-in');
+                        }, 500);
+                        
+                        currentStep--;
+                        updateProgress();
+                        validateStep(currentStep);
+                    }, 500);
+                }
+            }
+        }
+
+        function togglePreference(element) {
+            element.classList.toggle('selected');
+            const value = element.getAttribute('data-value');
+            const step = element.closest('.setup-step').getAttribute('data-step');
+            let category;
+            
+            switch(step) {
+                case '5':
+                    category = 'interests';
+                    break;
+                case '6':
+                    category = 'preferences';
+                    break;
+                case '7':
+                    category = 'communicationStyle';
+                    break;
+                case '8':
+                    category = 'responsePreferences';
+                    break;
+                case '9':
+                    category = 'learningStyle';
+                    break;
+                case '10':
+                    category = 'developmentTools';
+                    break;
+                default:
+                    return;
+            }
+            
+            if (element.classList.contains('selected')) {
+                if (!userPreferences[category].includes(value)) {
+                    userPreferences[category].push(value);
+                }
+            } else {
+                userPreferences[category] = userPreferences[category].filter(v => v !== value);
+            }
+            
+            validateStep(parseInt(step));
+        }
+
+        // Add media queries for responsive grid
+        const responsiveStyles = document.createElement('style');
+        responsiveStyles.textContent = `
+            @media (max-width: 1200px) {
+                .preference-options {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+            }
+            
+            @media (max-width: 768px) {
+                .preference-options {
+                    grid-template-columns: repeat(1, 1fr);
+                }
+                
+                .setup-step {
+                    padding: 1rem;
+                }
+            }
+        `;
+        document.head.appendChild(responsiveStyles);
+
+        function updateSystemInstructions() {
+            let customInstructions = DEFAULT_SYSTEM_INSTRUCTIONS;
+            
+            // Add communication style preferences
+            if (userPreferences.communicationStyle.includes('detailed')) {
+                customInstructions += '\nProvide detailed and comprehensive explanations.';
+            }
+            if (userPreferences.communicationStyle.includes('concise')) {
+                customInstructions += '\nFocus on brevity and clarity in responses.';
+            }
+            if (userPreferences.communicationStyle.includes('technical')) {
+                customInstructions += '\nUse technical terminology and in-depth explanations.';
+            }
+            if (userPreferences.communicationStyle.includes('casual')) {
+                customInstructions += '\nMaintain a friendly and conversational tone.';
+            }
+            if (userPreferences.communicationStyle.includes('professional')) {
+                customInstructions += '\nMaintain a professional and formal tone.';
+            }
+            if (userPreferences.communicationStyle.includes('educational')) {
+                customInstructions += '\nFocus on teaching and explaining concepts clearly.';
+            }
+            
+            // Add response preferences
+            if (userPreferences.responsePreferences.includes('step_by_step')) {
+                customInstructions += '\nBreak down complex explanations into clear steps.';
+            }
+            if (userPreferences.responsePreferences.includes('examples')) {
+                customInstructions += '\nInclude practical examples in explanations.';
+            }
+            if (userPreferences.responsePreferences.includes('analogies')) {
+                customInstructions += '\nUse analogies to explain complex concepts.';
+            }
+            if (userPreferences.responsePreferences.includes('best_practices')) {
+                customInstructions += '\nHighlight industry best practices and standards.';
+            }
+            if (userPreferences.responsePreferences.includes('alternatives')) {
+                customInstructions += '\nProvide alternative approaches when relevant.';
+            }
+            
+            // Add learning style preferences
+            if (userPreferences.learningStyle.includes('visual')) {
+                customInstructions += '\nUse visual explanations when possible.';
+            }
+            if (userPreferences.learningStyle.includes('practical')) {
+                customInstructions += '\nFocus on practical, hands-on examples.';
+            }
+            if (userPreferences.learningStyle.includes('theoretical')) {
+                customInstructions += '\nInclude theoretical background and concepts.';
+            }
+            if (userPreferences.learningStyle.includes('interactive')) {
+                customInstructions += '\nEncourage interactive learning and experimentation.';
+            }
+            
+            // Add comprehensive user context
+            customInstructions += `\n\nUser Context:
+Name: ${userPreferences.name}
+Role: ${userPreferences.role}
+Experience Level: ${userPreferences.experience}
+Goals: ${userPreferences.goals}
+Interests: ${userPreferences.interests.join(', ')}
+Use Cases: ${userPreferences.preferences.join(', ')}
+Communication Style: ${userPreferences.communicationStyle.join(', ')}
+Response Preferences: ${userPreferences.responsePreferences.join(', ')}
+Learning Style: ${userPreferences.learningStyle.join(', ')}
+Development Tools: ${userPreferences.developmentTools.join(', ')}`;
+            
+            SYSTEM_INSTRUCTIONS = customInstructions;
+        }
+
+        function selectTheme(theme, element) {
+            document.querySelectorAll('.theme-option').forEach(opt => opt.classList.remove('selected'));
+            element.classList.add('selected');
+            userPreferences.theme = theme;
+            
+            // Apply theme immediately
+            isDarkTheme = theme === 'dark';  // Set isDarkTheme directly based on selection
+            toggleTheme();
+        }
+
+        function updateProgress() {
+            document.querySelectorAll('.progress-dot').forEach((dot, index) => {
+                dot.classList.toggle('active', index < currentStep);
+            });
         }
     </script>
 </body>
