@@ -1659,96 +1659,60 @@
             }
         }
 
-        /* Add splash screen styles at the top */
+        /* Add splash screen animation styles */
         .splash-screen {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: var(--background-dark);
+            background-color: var(--background-dark);
             display: flex;
             justify-content: center;
             align-items: center;
             z-index: 9999;
             opacity: 1;
-            overflow: hidden;
+            transition: opacity 0.5s ease-in-out;
         }
 
-        .splash-screen::before {
-            content: '';
-            position: absolute;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(
-                45deg,
-                rgba(66, 133, 244, 0.15),
-                rgba(219, 68, 55, 0.15),
-                rgba(244, 180, 0, 0.15),
-                rgba(15, 157, 88, 0.15)
-            );
-            animation: gradientMove 15s linear infinite;
+        .splash-screen.fade-out {
             opacity: 0;
-            animation: fadeInGradient 2s ease forwards 0.5s;
-        }
-
-        .splash-screen::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: radial-gradient(
-                circle at center,
-                transparent 0%,
-                var(--background-dark) 70%
-            );
+            pointer-events: none;
         }
 
         .splash-content {
             text-align: center;
-            transform: scale(0.8);
-            opacity: 0;
-            animation: splashIntro 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            padding: 2rem;
             max-width: 800px;
-            width: 90%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
+            width: 100%;
             position: relative;
-            overflow: hidden;
-            padding: 0;
-            z-index: 1;
         }
 
         .splash-logo {
             font-size: 4rem;
             margin-bottom: 1rem;
+            color: transparent;
             background: var(--google-gradient);
             -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: logoAnimation 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-            display: inline-block;
-            position: relative;
-            filter: drop-shadow(0 0 20px rgba(66, 133, 244, 0.3));
+            background-clip: text;
+            opacity: 0;
+            transform: scale(0.5);
+            animation: logoReveal 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
         }
 
-        .splash-logo::after {
-            content: '';
-            position: absolute;
-            top: -20%;
-            left: -20%;
-            right: -20%;
-            bottom: -20%;
-            background: radial-gradient(
-                circle at center,
-                rgba(255, 255, 255, 0.2) 0%,
-                transparent 70%
-            );
-            animation: glowPulse 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        @keyframes logoReveal {
+            0% {
+                opacity: 0;
+                transform: scale(0.5) rotate(-180deg);
+            }
+            50% {
+                opacity: 0.5;
+                transform: scale(1.2) rotate(0deg);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) rotate(0deg);
+            }
         }
 
         .splash-title {
@@ -1757,529 +1721,305 @@
             margin-bottom: 0.5rem;
             background: var(--google-gradient);
             -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            color: transparent;
             opacity: 0;
             transform: translateY(20px);
-            animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards 0.5s,
-                      gradientFlow 5s ease infinite;
-            background-size: 300% 300%;
-            filter: drop-shadow(0 0 10px rgba(66, 133, 244, 0.2));
+            animation: titleReveal 1s cubic-bezier(0.4, 0, 0.2, 1) forwards 0.5s;
         }
 
         .splash-subtitle {
             font-size: 1.2rem;
-            color: var(--text-primary);
             opacity: 0;
             transform: translateY(20px);
-            animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards 1s;
-            margin-bottom: 2rem;
-            position: relative;
-            text-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+            animation: subtitleReveal 1s cubic-bezier(0.4, 0, 0.2, 1) forwards 1s;
+            background: linear-gradient(45deg, rgba(255,255,255,0.8), rgba(255,255,255,0.6));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
         }
 
-        .splash-subtitle::after {
-            content: '';
+        .glow-effect {
             position: absolute;
-            bottom: -10px;
+            top: 50%;
             left: 50%;
-            transform: translateX(-50%);
-            width: 50px;
-            height: 2px;
-            background: var(--google-gradient);
-            animation: lineWidth 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+            width: 200px;
+            height: 200px;
+            transform: translate(-50%, -50%);
+            background: radial-gradient(circle, rgba(66,133,244,0.2) 0%, rgba(219,68,55,0.2) 50%, rgba(244,180,0,0.2) 100%);
+            filter: blur(20px);
+            opacity: 0;
+            animation: glowPulse 3s ease-in-out infinite;
         }
 
-        @keyframes logoAnimation {
-            0% { transform: rotate(0deg) scale(1); filter: hue-rotate(0deg) brightness(1); }
-            25% { transform: rotate(90deg) scale(1.1); filter: hue-rotate(90deg) brightness(1.2); }
-            50% { transform: rotate(180deg) scale(1.2); filter: hue-rotate(180deg) brightness(1.4); }
-            75% { transform: rotate(270deg) scale(1.1); filter: hue-rotate(270deg) brightness(1.2); }
-            100% { transform: rotate(360deg) scale(1); filter: hue-rotate(360deg) brightness(1); }
+        @keyframes rippleEffect {
+            0% {
+                transform: translate(-50%, -50%) scale(0);
+                opacity: 0.5;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(2);
+                opacity: 0;
+            }
+        }
+
+        @keyframes titleReveal {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes subtitleReveal {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         @keyframes glowPulse {
-            0% { opacity: 0; transform: scale(0.8) rotate(0deg); }
-            25% { opacity: 0.3; transform: scale(1) rotate(90deg); }
-            50% { opacity: 0.5; transform: scale(1.2) rotate(180deg); }
-            75% { opacity: 0.3; transform: scale(1) rotate(270deg); }
-            100% { opacity: 0; transform: scale(0.8) rotate(360deg); }
-        }
-
-        @keyframes gradientMove {
-            0% { transform: translate(-50%, -50%) rotate(0deg) scale(1); }
-            50% { transform: translate(-50%, -50%) rotate(180deg) scale(1.2); }
-            100% { transform: translate(-50%, -50%) rotate(360deg) scale(1); }
-        }
-
-        @keyframes fadeInGradient {
-            0% { opacity: 0; transform: scale(0.8); }
-            50% { opacity: 0.5; transform: scale(1.1); }
-            100% { opacity: 1; transform: scale(1); }
-        }
-
-        @keyframes lineWidth {
-            0% { width: 0; opacity: 0; transform: translateX(-50%) scaleX(0); }
-            50% { width: 100px; opacity: 1; transform: translateX(-50%) scaleX(1); }
-            100% { width: 0; opacity: 0; transform: translateX(-50%) scaleX(0); }
-        }
-
-        @keyframes gradientFlow {
-            0% { background-position: 0% 50%; filter: hue-rotate(0deg); }
-            50% { background-position: 100% 50%; filter: hue-rotate(180deg); }
-            100% { background-position: 0% 50%; filter: hue-rotate(360deg); }
-        }
-
-        @keyframes splashIntro {
-            0% { transform: scale(0.8) translateY(20px); opacity: 0; }
-            50% { transform: scale(1.1) translateY(-10px); opacity: 0.5; }
-            100% { transform: scale(1) translateY(0); opacity: 1; }
-        }
-
-        @keyframes fadeInUp {
-            0% { 
+            0% {
                 opacity: 0;
-                transform: translateY(20px) scale(0.9);
+                transform: translate(-50%, -50%) scale(0.8);
             }
-            50% { 
+            50% {
                 opacity: 0.5;
-                transform: translateY(-5px) scale(1.05);
+                transform: translate(-50%, -50%) scale(1.2);
             }
-            100% { 
-                opacity: 1;
-                transform: translateY(0) scale(1);
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.8);
             }
         }
 
         .setup-steps {
-            display: none;
-            flex-direction: column;
-            gap: 1rem;
-            opacity: 0;
-            transition: opacity 0.5s ease;
-            height: 100%;
-            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
         }
 
         .setup-step {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 90%;
-            max-width: 600px;
-            text-align: center;
             display: none;
-            opacity: 0;
-            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-            overflow: visible;
-            height: auto;
-            gap: 1.5rem;
-            min-height: 100%;
-            padding: 8rem 0;  /* Increased padding */
-            box-sizing: border-box;
-            perspective: 1000px;
+            animation: fadeIn 0.5s ease-in-out;
         }
 
         .setup-step.active {
+            display: block;
+        }
+
+        .step-content-card {
+            background-color: var(--surface-dark);
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .step-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: transparent;
+            background: var(--google-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+        }
+
+        .step-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .step-description {
+            font-size: 1rem;
+            opacity: 0.8;
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+        }
+
+        .setup-input-group {
             display: flex;
             flex-direction: column;
-            opacity: 1;
-            justify-content: center;
+            gap: 1rem;
         }
 
-        .step-header-card,
-        .step-content-card {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 16px;
-            padding: 2rem;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-            margin-bottom: 1.5rem;  /* Added margin */
+        .setup-input-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
         }
 
-        .setup-step.slide-out .step-header-card {
-            opacity: 0;
+        .setup-input-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
         }
 
-        .setup-step.slide-out .step-content-card {
-            opacity: 0;
-            transition-delay: 0.1s;
+        .setup-input {
+            padding: 0.75rem;
+            border: none;
+            border-radius: 6px;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: background-color 0.3s ease;
         }
 
-        .setup-step.slide-in .step-header-card {
-            animation: cardFadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        .setup-input:focus {
+            outline: none;
+            background-color: rgba(255, 255, 255, 0.15);
         }
 
-        .setup-step.slide-in .step-content-card {
-            animation: cardFadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) 0.1s forwards;
-        }
-
-        @keyframes cardFadeIn {
-            0% {
-                opacity: 0;
-            }
-            100% {
-                opacity: 1;
-            }
+        .setup-input::placeholder {
+            color: rgba(var(--text-primary-rgb), 0.5);
         }
 
         .setup-buttons {
-            position: fixed;
-            bottom: 10rem;  /* Increased bottom spacing */
-            left: 50%;
-            transform: translateX(-50%);
             display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
             gap: 1rem;
-            justify-content: center;
-            z-index: 100;
-            width: 100%;
-            max-width: 600px;
-            padding: 0 1rem;
         }
 
         .setup-button {
-            padding: 0.75rem 2rem;
-            border-radius: 12px;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
             font-size: 1rem;
             cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            background: transparent;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .setup-button.primary {
+            background: var(--google-gradient);
+            color: white;
+        }
+
+        .setup-button.secondary {
+            background-color: rgba(255, 255, 255, 0.1);
             color: var(--text-primary);
-            min-width: 150px;
-            justify-content: center;
-            transform: translateY(0);
         }
 
-        .setup-button:hover:not(:disabled) {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-        }
-
-        .setup-button:active:not(:disabled) {
-            transform: translateY(-1px);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        .setup-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
         }
 
         .setup-progress {
-            position: fixed;
-            bottom: 8rem;  /* Increased bottom spacing */
-            left: 50%;
-            transform: translateX(-50%);
             display: flex;
             justify-content: center;
             gap: 0.5rem;
-            padding: 1rem;
-            z-index: 10;
-            width: 100%;
-            max-width: 600px;
+            margin-top: 2rem;
         }
 
         .progress-dot {
             width: 8px;
             height: 8px;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.2);
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            transform: scale(1);
+            background-color: rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
         }
 
         .progress-dot.active {
             background: var(--google-gradient);
             transform: scale(1.2);
-            box-shadow: 0 0 10px rgba(66, 133, 244, 0.5);
-        }
-
-        @keyframes logoSpin {
-            0% { transform: rotate(0deg) scale(1); }
-            50% { transform: rotate(180deg) scale(1.2); }
-            100% { transform: rotate(360deg) scale(1); }
-        }
-
-        @keyframes splashIntro {
-            0% {
-                transform: scale(0.8);
-                opacity: 0;
-            }
-            100% {
-                transform: scale(1);
-                opacity: 1;
-            }
-        }
-
-        @media (max-height: 800px) {
-            .setup-step {
-                padding: 6rem 0;
-            }
-            
-            .setup-buttons {
-                bottom: 8rem;
-            }
-            
-            .setup-progress {
-                bottom: 6rem;
-            }
-        }
-
-        @media (max-height: 600px) {
-            .setup-step {
-                padding: 4rem 0;
-            }
-            
-            .setup-buttons {
-                bottom: 6rem;
-            }
-            
-            .setup-progress {
-                bottom: 4rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .theme-preview {
-                flex-direction: column;
-                align-items: center;
-                gap: 1rem;
-            }
-
-            .theme-option {
-                width: 100%;
-                max-width: 300px;
-                height: 120px;
-            }
-            
-            .setup-step {
-                width: 95%;
-                padding: 4rem 1rem;
-            }
-            
-            .step-icon {
-                width: 60px;
-                height: 60px;
-                font-size: 1.5rem;
-            }
-            
-            .step-title {
-                font-size: 1.5rem;
-            }
-        }
-
-        .preference-options {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 1rem;
-            width: 100%;
-            max-width: 600px;
-            margin: 1rem auto;
-        }
-
-        .preference-option {
-            background: transparent;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 12px;
-            padding: 1rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-align: center;
-            height: auto;
-            aspect-ratio: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 0.75rem;
-            min-height: 85px;  /* Reduced from 120px */
-        }
-
-        .preference-option:hover {
-            transform: translateY(-5px);
-            border-color: rgba(255, 255, 255, 0.5);
-        }
-
-        .preference-option.selected {
-            background: var(--google-gradient);
-            border-color: transparent;
-            transform: scale(1.05);
-        }
-
-        .preference-option i {
-            font-size: 1.5rem;  /* Reduced from 2rem */
-            margin-bottom: 0.25rem;  /* Reduced from 0.5rem */
-        }
-
-        .preference-option span {
-            font-size: 0.9rem;  /* Reduced from default */
-        }
-
-        @media (max-width: 480px) {
-            .preference-option {
-                min-height: 70px;  /* Reduced from 100px */
-                padding: 0.75rem;
-            }
-        }
-
-        .setup-checkbox {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin: 0.5rem 0;
-            cursor: pointer;
-        }
-
-        .setup-checkbox input {
-            width: 18px;
-            height: 18px;
-            border-radius: 4px;
-            accent-color: var(--google-gradient-start);
         }
 
         .theme-preview {
             display: flex;
-            gap: 2rem;
-            margin: 2rem 0;
-            width: 100%;
-            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
         }
 
         .theme-option {
-            width: 250px;
-            height: 150px;
-            border-radius: 16px;
+            flex: 1;
+            padding: 1rem;
+            border-radius: 8px;
             cursor: pointer;
-            position: relative;
-            overflow: hidden;
-            border: 2px solid transparent;
             transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            gap: 1rem;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-        }
-
-        .theme-option:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            border: 2px solid transparent;
         }
 
         .theme-option.selected {
-            border-color: var(--google-gradient-start);
-            transform: scale(1.05);
-            box-shadow: 0 8px 32px rgba(66, 133, 244, 0.3);
+            border-color: #4285F4;
         }
 
         .theme-dark {
-            background: #000000;
-            color: white;
+            background-color: #1a1a1a;
         }
 
         .theme-light {
-            background: #ffffff;
-            color: black;
+            background-color: #f5f5f5;
+            color: #333;
         }
 
         .theme-preview-content {
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .theme-preview-content i {
-            font-size: 2.5rem;
-            margin-bottom: 0.75rem;
-        }
-
-        .theme-preview-content span {
-            font-size: 1.2rem;
-            font-weight: 500;
-        }
-
-        .theme-dark .theme-preview-content {
-            color: white;
-        }
-
-        .theme-light .theme-preview-content {
-            color: black;
-        }
-
-        /* Add theme preview mockup elements */
-        .theme-option::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 30px;
-            background: rgba(255, 255, 255, 0.1);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .theme-option::after {
-            content: '';
-            position: absolute;
-            left: 0;
-            width: 40px;
-            top: 0;
-            bottom: 0;
-            background: rgba(255, 255, 255, 0.05);
-            border-right: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .theme-light::before {
-            background: rgba(0, 0, 0, 0.05);
-            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-        }
-
-        .theme-light::after {
-            background: rgba(0, 0, 0, 0.02);
-            border-right: 1px solid rgba(0, 0, 0, 0.1);
-        }
-
-        @media (max-width: 768px) {
-            .theme-option {
-                width: 200px;
-                height: 120px;
-            }
-
-            .theme-preview-content i {
-                font-size: 2rem;
-            }
-
-            .theme-preview-content span {
-                font-size: 1rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .theme-preview {
                 flex-direction: column;
                 align-items: center;
-                gap: 1rem;
-            }
+            gap: 0.5rem;
+        }
 
-            .theme-option {
-                width: 250px;
-                height: 130px;
+        .preference-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .preference-option {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            border: 2px solid transparent;
+        }
+
+        .preference-option:hover {
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .preference-option.selected {
+            border-color: #4285F4;
+            background-color: rgba(66, 133, 244, 0.2);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
             }
         }
 
-        /* Update existing setup step styles */
-        .setup-step {
-            max-height: 400px;
-            overflow-y: auto;
-        }
-
-        .setup-button.primary:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            background: rgba(255, 255, 255, 0.1);
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+            }
         }
 
         @keyframes spin {
@@ -2441,76 +2181,576 @@
             50% { transform: scale(1.4); opacity: 0; }
             100% { transform: scale(1); opacity: 0.5; }
         }
+
+        .splash-particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            opacity: 0;
+            animation: particlesReveal 1s ease forwards 1.5s;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: var(--google-gradient);
+            opacity: 0;
+            animation: particleFloat 3s infinite;
+        }
+
+        @keyframes particlesReveal {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes particleFloat {
+            0% {
+                transform: translate(0, 0);
+                opacity: 0;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--tx), var(--ty));
+                opacity: 0;
+            }
+        }
+       
+        .ripple-effect {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100px;
+            height: 100px;
+            background: var(--google-gradient);
+            border-radius: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            animation: rippleExpand 2s ease-out forwards;
+            opacity: 0.3;
+        }
+
+        .swirl-effect {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 300px;
+            height: 300px;
+            background: conic-gradient(from 0deg, 
+                rgba(66,133,244,0.2), 
+                rgba(219,68,55,0.2), 
+                rgba(244,180,0,0.2), 
+                rgba(15,157,88,0.2), 
+                rgba(66,133,244,0.2));
+            border-radius: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            animation: swirlSpin 2s ease-out forwards;
+            filter: blur(10px);
+        }
+
+        @keyframes rippleExpand {
+            0% {
+                transform: translate(-50%, -50%) scale(0);
+                opacity: 0.5;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(3);
+                opacity: 0;
+            }
+        }
+
+        @keyframes swirlSpin {
+            0% {
+                transform: translate(-50%, -50%) scale(0) rotate(0deg);
+                opacity: 0;
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.5) rotate(180deg);
+                opacity: 0.5;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(0) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes logoPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        .splash-logo {
+            animation: none;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .splash-title {
+            animation: none;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .splash-subtitle {
+            animation: none;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        #setupSteps {
+            transition: opacity 0.5s ease;
+        }
+
+        @keyframes logoPulseRainbow {
+            0% { transform: scale(1); filter: hue-rotate(0deg); }
+            50% { transform: scale(1.2); filter: hue-rotate(180deg); }
+            100% { transform: scale(1); filter: hue-rotate(360deg); }
+        }
+
+        .title-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 120%;
+            height: 120%;
+            background: radial-gradient(circle, rgba(66,133,244,0.3) 0%, transparent 70%);
+            transform: translate(-50%, -50%);
+            animation: titleGlowPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes titleGlowPulse {
+            0% { opacity: 0.3; transform: translate(-50%, -50%) scale(0.8); }
+            50% { opacity: 0.6; transform: translate(-50%, -50%) scale(1.1); }
+            100% { opacity: 0.3; transform: translate(-50%, -50%) scale(0.8); }
+        }
+
+        .wave-effect {
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, var(--google-gradient), transparent);
+            animation: waveMove 2s linear infinite;
+        }
+
+        @keyframes waveMove {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .floating-elements {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .floating-element {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: var(--google-gradient);
+            border-radius: 50%;
+            animation: floatAround 4s ease-in-out infinite;
+        }
+
+        @keyframes floatAround {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(100px, -50px) rotate(120deg); }
+            66% { transform: translate(-50px, 100px) rotate(240deg); }
+            100% { transform: translate(0, 0) rotate(360deg); }
+        }
+
+        .particle-burst {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 4px;
+            height: 4px;
+            background: var(--google-gradient);
+            border-radius: 50%;
+            animation: particleBurst 1s ease-out forwards;
+        }
+
+        @keyframes particleBurst {
+            0% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(50);
+                opacity: 0;
+            }
+        }
+
+        /* Add styles for setup transitions */
+        .splash-logo, .splash-title, .splash-subtitle {
+            transition: transform 0.5s ease, opacity 0.5s ease;
+        }
+        
+        .setup-steps {
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        
+        .setup-step {
+            display: none;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        
+        .setup-step.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .setup-step.slide-out {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+
+        .setup-step.slide-in {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .step-content-card {
+            transform: translateY(0);
+            transition: transform 0.5s ease, opacity 0.5s ease;
+        }
+
+        .setup-step.active .step-content-card {
+            animation: cardAppear 0.5s ease forwards;
+        }
+
+        @keyframes cardAppear {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .progress-dot {
+            transition: background 0.3s ease, transform 0.3s ease;
+        }
+
+        .progress-dot.active {
+            transform: scale(1.2);
+        }
+
+        .interests-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.75rem;
+        }
+
+        .interests-grid .span-2 {
+            grid-column: span 2;
+        }
+
+        @media (max-width: 768px) {
+            .interests-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .interests-grid .span-2 {
+                grid-column: span 1;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .interests-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Add after the interests-grid styles */
+        .response-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+        }
+
+        .response-grid .preference-option {
+            grid-column: span 1;
+        }
+
+        .response-grid .span-2 {
+            grid-column: span 2;
+        }
+
+        @media (max-width: 768px) {
+            .response-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .response-grid .preference-option,
+            .response-grid .span-2 {
+                grid-column: span 1;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .response-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .response-grid .preference-option,
+            .response-grid .span-2 {
+                grid-column: span 1;
+            }
+        }
     </style>
+
+        <script>
+        // Add styles for setup transitions
+        const setupAnimationStyles = document.createElement('style');
+        setupAnimationStyles.textContent = `
+            .splash-logo, .splash-title, .splash-subtitle {
+                transition: transform 0.5s ease, opacity 0.5s ease;
+            }
+            
+            .setup-steps {
+                opacity: 0;
+                transition: opacity 0.5s ease;
+            }
+            
+            .setup-step {
+                display: none;
+                opacity: 0;
+                transform: translateY(20px);
+                transition: opacity 0.5s ease, transform 0.5s ease;
+            }
+            
+            .setup-step.active {
+                display: block;
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            .setup-step.slide-out {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            .setup-step.slide-in {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            .step-content-card {
+                transform: translateY(0);
+                transition: transform 0.5s ease, opacity 0.5s ease;
+            }
+
+            .setup-step.active .step-content-card {
+                animation: cardAppear 0.5s ease forwards;
+            }
+
+            @keyframes cardAppear {
+                from {
+                    opacity: 0;
+                    transform: translateY(20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            .progress-dot {
+                transition: background 0.3s ease, transform 0.3s ease;
+            }
+
+            .progress-dot.active {
+                transform: scale(1.2);
+            }
+        `;
+        document.head.appendChild(setupAnimationStyles);
+
+        function nextStep() {
+            if (validateStep(currentStep)) {
+                if (currentStep === totalSteps) {
+                    completeSetup();
+                    return;
+                }
+                
+                const currentStepEl = document.querySelector(`.setup-step[data-step="${currentStep}"]`);
+                const nextStepEl = document.querySelector(`.setup-step[data-step="${currentStep + 1}"]`);
+                
+                if (currentStepEl && nextStepEl && currentStep < totalSteps) {
+                    currentStepEl.style.opacity = '0';
+                    currentStepEl.style.transform = 'translateY(-20px)';
+                    
+                    setTimeout(() => {
+                        currentStepEl.style.display = 'none';
+                        currentStepEl.classList.remove('active');
+                        nextStepEl.style.display = 'block';
+                        nextStepEl.classList.add('active');
+                        
+                        // Force reflow
+                        nextStepEl.offsetHeight;
+                        
+                        nextStepEl.style.opacity = '1';
+                        nextStepEl.style.transform = 'translateY(0)';
+                        
+                        currentStep++;
+                        updateProgress();
+                        updateButtons();
+                        validateStep(currentStep);
+                    }, 300);
+                }
+            }
+        }
+
+        function prevStep() {
+            if (currentStep > 1) {
+                const currentStepEl = document.querySelector(`.setup-step[data-step="${currentStep}"]`);
+                const prevStepEl = document.querySelector(`.setup-step[data-step="${currentStep - 1}"]`);
+                
+                if (currentStepEl && prevStepEl) {
+                    currentStepEl.style.opacity = '0';
+                    currentStepEl.style.transform = 'translateY(20px)';
+                    
+                    setTimeout(() => {
+                        currentStepEl.style.display = 'none';
+                        currentStepEl.classList.remove('active');
+                        prevStepEl.style.display = 'block';
+                        prevStepEl.classList.add('active');
+                        
+                        // Force reflow
+                        prevStepEl.offsetHeight;
+                        
+                        prevStepEl.style.opacity = '1';
+                        prevStepEl.style.transform = 'translateY(0)';
+                        
+                        currentStep--;
+                        updateProgress();
+                        updateButtons();
+                        validateStep(currentStep);
+                    }, 300);
+                }
+            }
+        }
+    </script>
 </head>
 <body>
-    <!-- Add splash screen HTML right after body tag -->
-    <div class="splash-screen" id="splashScreen">
+    <script>
+        // Create particles for the splash screen
+        function createParticles() {
+            const particlesContainer = document.querySelector('.splash-particles');
+            const numParticles = 30;
+
+            for (let i = 0; i < numParticles; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                
+                // Random position
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                
+                // Random movement
+                const tx = (Math.random() - 0.5) * 200;
+                const ty = (Math.random() - 0.5) * 200;
+                particle.style.setProperty('--tx', `${tx}px`);
+                particle.style.setProperty('--ty', `${ty}px`);
+                
+                // Random delay
+                particle.style.animationDelay = Math.random() * 2 + 's';
+                
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // Initialize particles when the page loads
+        document.addEventListener('DOMContentLoaded', createParticles);
+    </script>
+
+    <div id="splashScreen" class="splash-screen">
         <div class="splash-content">
-            <div class="splash-logo">
-                <i class="fa-solid fa-hexagon-nodes"></i>
-            </div>
-            <div class="splash-title">Welcome to Gemi</div>
-            <div class="splash-subtitle">Your Advanced AI Assistant</div>
+            <div class="glow-effect"></div>
+            <div class="splash-particles"></div>
+            <i class="fa-solid fa-hexagon-nodes splash-logo"></i>
+            <div class="splash-title">Welcome to Gem Intelligence</div>
+            <div class="splash-subtitle">Your AI-powered coding companion</div>
             
-            <div class="setup-steps" id="setupSteps">
+            <!-- Setup steps will be shown after initial splash -->
+            <div id="setupSteps" class="setup-steps">
+                <!-- Step 1: Welcome -->
                 <div class="setup-step" data-step="1">
                     <div class="step-content-card">
-                        <div class="step-icon">
-                            <i class="fas fa-magic"></i>
-                        </div>
-                        <div class="step-title">Welcome to Gemi</div>
+                        <div class="step-icon"><i class="fas fa-robot"></i></div>
                         <div class="step-description">
-                            Gemi is your advanced AI assistant, designed to help you with coding, learning, and problem-solving. Let's take a moment to personalize your experience and make Gemi work perfectly for you.
+                            Let's personalize your experience. This quick setup will help us understand your preferences and provide better assistance.
                         </div>
                     </div>
                 </div>
 
+                <!-- Step 2: Basic Info -->
                 <div class="setup-step" data-step="2">
                     <div class="step-content-card">
-                        <div class="step-icon">
-                            <i class="fas fa-user"></i>
+                        <div class="step-icon"><i class="fas fa-user"></i></div>
+                        <div class="step-title">Tell us about yourself</div>
+                        <div class="step-description">
+                            This information helps us personalize your experience.
                         </div>
-                        <div class="step-title">About You</div>
                         <div class="setup-input-group">
                             <div class="setup-input-wrapper">
-                                <label class="setup-input-label" for="userName">What should we call you?</label>
-                                <input type="text" class="setup-input" id="userName" placeholder="Enter your name" maxlength="50">
+                                <label class="setup-input-label" for="userName" style="text-align: center;">Your Name</label>
+                                <input type="text" id="userName" class="setup-input" placeholder="Enter your name">
                             </div>
                             <div class="setup-input-wrapper">
-                                <label class="setup-input-label" for="userRole">What's your role?</label>
-                                <input type="text" class="setup-input" id="userRole" placeholder="e.g., Developer, Student, Designer">
+                                <label class="setup-input-label" for="userRole" style="text-align: center;">Your Role</label>
+                                <input type="text" id="userRole" class="setup-input" placeholder="e.g., Developer, Student, Designer">
                             </div>
                         </div>
                     </div>
                 </div>
 
+                <!-- Step 3: Experience -->
                 <div class="setup-step" data-step="3">
                     <div class="step-content-card">
-                        <div class="step-icon">
-                            <i class="fas fa-graduation-cap"></i>
+                        <div class="step-icon"><i class="fas fa-code"></i></div>
+                        <div class="step-title">Your Experience & Goals</div>
+                        <div class="step-description">
+                            Help us understand your background and what you want to achieve.
                         </div>
-                        <div class="step-title">Experience & Goals</div>
                         <div class="setup-input-group">
-                            <div>
-                                <label class="setup-input-label" for="userExperience">Your experience level?</label>
-                                <input type="text" class="setup-input" id="userExperience" placeholder="e.g., Beginner, Intermediate, Expert">
+                            <div class="setup-input-wrapper">
+                                <label class="setup-input-label" for="userExperience" style="text-align: center;">Experience Level</label>
+                                <input type="text" id="userExperience" class="setup-input" placeholder="e.g., Beginner, Intermediate, Advanced">
                             </div>
-                            <div>
-                                <label class="setup-input-label" for="userGoals">What are your main goals?</label>
-                                <input type="text" class="setup-input" id="userGoals" placeholder="What do you want to achieve with Gemi?">
+                            <div class="setup-input-wrapper">
+                                <label class="setup-input-label" for="userGoals" style="text-align: center;">Learning Goals</label>
+                                <input type="text" id="userGoals" class="setup-input" placeholder="What do you want to achieve?">
                             </div>
                         </div>
                     </div>
                 </div>
 
+                <!-- Step 4: Theme -->
                 <div class="setup-step" data-step="4">
                     <div class="step-content-card">
-                        <div class="step-icon">
-                            <i class="fas fa-palette"></i>
+                        <div class="step-icon"><i class="fas fa-palette"></i></div>
+                        <div class="step-title">Choose Your Theme</div>
+                        <div class="step-description">
+                            Select a theme that suits your preference.
                         </div>
-                        <div class="step-title">Visual Preferences</div>
-                        <div class="step-description">Select your preferred theme.</div>
                         <div class="theme-preview">
                             <div class="theme-option theme-dark selected" onclick="selectTheme('dark', this)">
                                 <div class="theme-preview-content">
@@ -2528,92 +2768,95 @@
                     </div>
                 </div>
 
+                <!-- Step 5: Interests -->
                 <div class="setup-step" data-step="5">
                     <div class="step-content-card">
-                        <div class="step-icon">
-                            <i class="fas fa-code"></i>
+                        <div class="step-icon"><i class="fas fa-star"></i></div>
+                        <div class="step-title">Your Interests</div>
+                        <div class="step-description">
+                            Select the areas you're interested in.
                         </div>
-                        <div class="step-title">Primary Interests</div>
-                        <div class="step-description">Select your main areas of interest to help us tailor your experience.</div>
-                        <div class="preference-options">
-                            <div class="preference-option" onclick="togglePreference(this)" data-value="coding">
-                                <i class="fas fa-code"></i>
-                                <span>Coding</span>
+                        <div class="preference-options interests-grid">
+                            <div class="preference-option" onclick="togglePreference(this)" data-value="science">
+                                <i class="fas fa-flask"></i>
+                                <span>Science</span>
                             </div>
-                            <div class="preference-option" onclick="togglePreference(this)" data-value="design">
+                            <div class="preference-option" onclick="togglePreference(this)" data-value="mathematics">
+                                <i class="fas fa-square-root-alt"></i>
+                                <span>Mathematics</span>
+                            </div>
+                            <div class="preference-option" onclick="togglePreference(this)" data-value="literature">
+                                <i class="fas fa-book"></i>
+                                <span>Literature</span>
+                            </div>
+                            <div class="preference-option" onclick="togglePreference(this)" data-value="history">
+                                <i class="fas fa-history"></i>
+                                <span>History</span>
+                            </div>
+                            <div class="preference-option" onclick="togglePreference(this)" data-value="art">
                                 <i class="fas fa-paint-brush"></i>
-                                <span>Design</span>
+                                <span>Art</span>
                             </div>
+                            <div class="preference-option" onclick="togglePreference(this)" data-value="music">
+                                <i class="fas fa-music"></i>
+                                <span>Music</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 6: Use Cases -->
+                <div class="setup-step" data-step="6">
+                    <div class="step-content-card">
+                        <div class="step-icon"><i class="fas fa-tasks"></i></div>
+                        <div class="step-title">Primary Use Cases</div>
+                        <div class="step-description">
+                            How do you plan to use Gem Intelligence?
+                        </div>
+                        <div class="preference-options interests-grid">
                             <div class="preference-option" onclick="togglePreference(this)" data-value="learning">
                                 <i class="fas fa-graduation-cap"></i>
                                 <span>Learning</span>
                             </div>
-                            <div class="preference-option" onclick="togglePreference(this)" data-value="business">
-                                <i class="fas fa-briefcase"></i>
-                                <span>Business</span>
-                            </div>
-                            <div class="preference-option" onclick="togglePreference(this)" data-value="research">
-                                <i class="fas fa-microscope"></i>
-                                <span>Research</span>
-                            </div>
-                            <div class="preference-option" onclick="togglePreference(this)" data-value="writing">
-                                <i class="fas fa-pen-fancy"></i>
-                                <span>Writing</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="setup-step" data-step="6">
-                    <div class="step-content-card">
-                        <div class="step-icon">
-                            <i class="fas fa-tasks"></i>
-                        </div>
-                        <div class="step-title">Use Cases</div>
-                        <div class="step-description">What would you like to use Gemi for? This helps us optimize responses.</div>
-                        <div class="preference-options">
                             <div class="preference-option" onclick="togglePreference(this)" data-value="problem_solving">
                                 <i class="fas fa-puzzle-piece"></i>
                                 <span>Problem Solving</span>
                             </div>
-                            <div class="preference-option" onclick="togglePreference(this)" data-value="code_review">
-                                <i class="fas fa-code-branch"></i>
-                                <span>Code Review</span>
+                            <div class="preference-option" onclick="togglePreference(this)" data-value="collaboration">
+                                <i class="fas fa-users"></i>
+                                <span>Collaboration</span>
                             </div>
-                            <div class="preference-option" onclick="togglePreference(this)" data-value="learning_concepts">
-                                <i class="fas fa-book-reader"></i>
-                                <span>Learning Concepts</span>
+                            <div class="preference-option" onclick="togglePreference(this)" data-value="project_management">
+                                <i class="fas fa-tasks"></i>
+                                <span>Project Management</span>
                             </div>
-                            <div class="preference-option" onclick="togglePreference(this)" data-value="project_planning">
-                                <i class="fas fa-project-diagram"></i>
-                                <span>Project Planning</span>
+                            <div class="preference-option" onclick="togglePreference(this)" data-value="research">
+                                <i class="fas fa-search"></i>
+                                <span>Research</span>
                             </div>
-                            <div class="preference-option" onclick="togglePreference(this)" data-value="debugging">
-                                <i class="fas fa-bug"></i>
-                                <span>Debugging</span>
-                            </div>
-                            <div class="preference-option" onclick="togglePreference(this)" data-value="brainstorming">
-                                <i class="fas fa-lightbulb"></i>
-                                <span>Brainstorming</span>
+                            <div class="preference-option" onclick="togglePreference(this)" data-value="best_practices">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Best Practices</span>
                             </div>
                         </div>
                     </div>
                 </div>
 
+                <!-- Step 7: Communication Style -->
                 <div class="setup-step" data-step="7">
                     <div class="step-content-card">
-                        <div class="step-icon">
-                            <i class="fas fa-robot"></i>
-                        </div>
+                        <div class="step-icon"><i class="fas fa-comments"></i></div>
                         <div class="step-title">Communication Style</div>
-                        <div class="step-description">How would you like Gemi to communicate with you?</div>
-                        <div class="preference-options">
+                        <div class="step-description">
+                            How would you like Gem Intelligence to communicate with you?
+                        </div>
+                        <div class="preference-options interests-grid">
                             <div class="preference-option" onclick="togglePreference(this)" data-value="detailed">
-                                <i class="fas fa-book"></i>
+                                <i class="fas fa-list"></i>
                                 <span>Detailed</span>
                             </div>
                             <div class="preference-option" onclick="togglePreference(this)" data-value="concise">
-                                <i class="fas fa-list"></i>
+                                <i class="fas fa-compress-alt"></i>
                                 <span>Concise</span>
                             </div>
                             <div class="preference-option" onclick="togglePreference(this)" data-value="technical">
@@ -2621,11 +2864,11 @@
                                 <span>Technical</span>
                             </div>
                             <div class="preference-option" onclick="togglePreference(this)" data-value="casual">
-                                <i class="fas fa-comments"></i>
+                                <i class="fas fa-smile"></i>
                                 <span>Casual</span>
                             </div>
                             <div class="preference-option" onclick="togglePreference(this)" data-value="professional">
-                                <i class="fas fa-user-tie"></i>
+                                <i class="fas fa-briefcase"></i>
                                 <span>Professional</span>
                             </div>
                             <div class="preference-option" onclick="togglePreference(this)" data-value="educational">
@@ -2636,14 +2879,15 @@
                     </div>
                 </div>
 
+                <!-- Step 8: Response Preferences -->
                 <div class="setup-step" data-step="8">
                     <div class="step-content-card">
-                        <div class="step-icon">
-                            <i class="fas fa-sliders-h"></i>
-                        </div>
+                        <div class="step-icon"><i class="fas fa-reply"></i></div>
                         <div class="step-title">Response Preferences</div>
-                        <div class="step-description">How would you like Gemi to structure responses?</div>
-                        <div class="preference-options">
+                        <div class="step-description">
+                            How would you like explanations to be structured?
+                        </div>
+                        <div class="preference-options response-grid">
                             <div class="preference-option" onclick="togglePreference(this)" data-value="step_by_step">
                                 <i class="fas fa-list-ol"></i>
                                 <span>Step by Step</span>
@@ -2652,110 +2896,127 @@
                                 <i class="fas fa-file-code"></i>
                                 <span>With Examples</span>
                             </div>
-                            <div class="preference-option" onclick="togglePreference(this)" data-value="explanations">
-                                <i class="fas fa-info-circle"></i>
-                                <span>With Explanations</span>
-                            </div>
                             <div class="preference-option" onclick="togglePreference(this)" data-value="analogies">
                                 <i class="fas fa-equals"></i>
                                 <span>With Analogies</span>
                             </div>
                             <div class="preference-option" onclick="togglePreference(this)" data-value="best_practices">
-                                <i class="fas fa-check-double"></i>
+                                <i class="fas fa-award"></i>
                                 <span>Best Practices</span>
                             </div>
                             <div class="preference-option" onclick="togglePreference(this)" data-value="alternatives">
                                 <i class="fas fa-random"></i>
                                 <span>With Alternatives</span>
                             </div>
+                            <div class="preference-option" onclick="togglePreference(this)" data-value="summary">
+                                <i class="fas fa-file-alt"></i>
+                                <span>Summary</span>
+                            </div>
                         </div>
                     </div>
                 </div>
 
+                <!-- Step 9: Text Generation Preferences -->
                 <div class="setup-step" data-step="9">
                     <div class="step-content-card">
-                        <div class="step-icon">
-                            <i class="fas fa-brain"></i>
+                        <div class="step-icon"><i class="fas fa-pen"></i></div>
+                        <div class="step-title">Text Generation Preferences</div>
+                        <div class="step-description">
+                            How would you like the AI to generate text?
                         </div>
-                        <div class="step-title">Learning Style</div>
-                        <div class="step-description">How do you prefer to learn and understand new concepts?</div>
-                        <div class="preference-options">
-                            <div class="preference-option" onclick="togglePreference(this)" data-value="visual">
-                                <i class="fas fa-eye"></i>
-                                <span>Visual</span>
+                        <div class="preference-options response-grid">
+                            <div class="preference-option" onclick="togglePreference(this)" data-value="creative">
+                                <i class="fas fa-paint-brush"></i>
+                                <span>Creative</span>
                             </div>
-                            <div class="preference-option" onclick="togglePreference(this)" data-value="practical">
-                                <i class="fas fa-hammer"></i>
-                                <span>Practical</span>
+                            <div class="preference-option" onclick="togglePreference(this)" data-value="informative">
+                                <i class="fas fa-info-circle"></i>
+                                <span>Informative</span>
                             </div>
-                            <div class="preference-option" onclick="togglePreference(this)" data-value="theoretical">
-                                <i class="fas fa-book-open"></i>
-                                <span>Theoretical</span>
+                            <div class="preference-option" onclick="togglePreference(this)" data-value="persuasive">
+                                <i class="fas fa-bullhorn"></i>
+                                <span>Persuasive</span>
                             </div>
-                            <div class="preference-option" onclick="togglePreference(this)" data-value="interactive">
-                                <i class="fas fa-hands-helping"></i>
-                                <span>Interactive</span>
+                            <div class="preference-option" onclick="togglePreference(this)" data-value="concise">
+                                <i class="fas fa-compress-alt"></i>
+                                <span>Concise</span>
                             </div>
-                            <div class="preference-option" onclick="togglePreference(this)" data-value="analytical">
-                                <i class="fas fa-chart-line"></i>
-                                <span>Analytical</span>
+                            <div class="preference-option" onclick="togglePreference(this)" data-value="narrative">
+                                <i class="fas fa-book"></i>
+                                <span>Narrative</span>
                             </div>
-                            <div class="preference-option" onclick="togglePreference(this)" data-value="experimental">
-                                <i class="fas fa-flask"></i>
-                                <span>Experimental</span>
+                            <div class="preference-option" onclick="togglePreference(this)" data-value="technical">
+                                <i class="fas fa-cogs"></i>
+                                <span>Technical</span>
                             </div>
                         </div>
                     </div>
                 </div>
 
+                <!-- Step 10: Development Tools -->
                 <div class="setup-step" data-step="10">
                     <div class="step-content-card">
-                        <div class="step-icon">
-                            <i class="fas fa-tools"></i>
-                        </div>
+                        <div class="step-icon"><i class="fas fa-tools"></i></div>
                         <div class="step-title">Development Tools</div>
-                        <div class="step-description">Which development tools and technologies do you commonly use?</div>
-                        <div class="preference-options">
-                            <div class="preference-option" onclick="togglePreference(this)" data-value="vs_code">
-                                <i class="fas fa-code"></i>
-                                <span>VS Code</span>
+                        <div class="step-description">
+                            Which tools do you commonly use?
+                        </div>
+                        <div class="preference-options response-grid">
+                            <div class="preference-option" onclick="togglePreference(this)" data-value="google_docs">
+                                <i class="fab fa-google"></i>
+                                <span>Google Docs</span>
                             </div>
-                            <div class="preference-option" onclick="togglePreference(this)" data-value="git">
-                                <i class="fab fa-git-alt"></i>
-                                <span>Git</span>
+                            <div class="preference-option" onclick="togglePreference(this)" data-value="microsoft_word">
+                                <i class="fas fa-file-word"></i>
+                                <span>Microsoft Word</span>
                             </div>
-                            <div class="preference-option" onclick="togglePreference(this)" data-value="docker">
-                                <i class="fab fa-docker"></i>
-                                <span>Docker</span>
+                            <div class="preference-option" onclick="togglePreference(this)" data-value="powerpoint">
+                                <i class="fas fa-file-powerpoint"></i>
+                                <span>PowerPoint</span>
                             </div>
-                            <div class="preference-option" onclick="togglePreference(this)" data-value="terminal">
-                                <i class="fas fa-terminal"></i>
-                                <span>Terminal</span>
+                            <div class="preference-option" onclick="togglePreference(this)" data-value="zoom">
+                                <i class="fas fa-video"></i>
+                                <span>Zoom</span>
                             </div>
-                            <div class="preference-option" onclick="togglePreference(this)" data-value="browser_tools">
-                                <i class="fas fa-browser"></i>
-                                <span>Browser Tools</span>
+                            <div class="preference-option" onclick="togglePreference(this)" data-value="notion">
+                                <i class="fas fa-book-open"></i>
+                                <span>Notion</span>
                             </div>
-                            <div class="preference-option" onclick="togglePreference(this)" data-value="cloud">
-                                <i class="fas fa-cloud"></i>
-                                <span>Cloud Services</span>
+                            <div class="preference-option" onclick="togglePreference(this)" data-value="evernote">
+                                <i class="fas fa-sticky-note"></i>
+                                <span>Evernote</span>
                             </div>
                         </div>
                     </div>
                 </div>
 
+                <!-- Step 11: Final Step -->
                 <div class="setup-step" data-step="11">
                     <div class="step-content-card">
-                        <div class="step-icon">
-                            <i class="fas fa-flag-checkered"></i>
-                        </div>
+                        <div class="step-icon"><i class="fas fa-check-circle"></i></div>
                         <div class="step-title">Almost Done!</div>
                         <div class="step-description">
-                            Great! Your preferences have been saved. Gemi will use these settings to provide you with the most relevant and helpful responses. You can always adjust these settings later from the sidebar menu.
+                            Your preferences will be saved for future sessions automatically. This means that every time you return, the system will remember your choices and tailor the experience to better suit your needs. You can always revisit and modify these preferences at any time to ensure that your interactions remain relevant and personalized. Thank you for taking the time to set up your preferences!
                         </div>
                     </div>
                 </div>
 
+                <!-- Setup Progress -->
+                <div class="setup-progress">
+                    <div class="progress-dot"></div>
+                    <div class="progress-dot"></div>
+                    <div class="progress-dot"></div>
+                    <div class="progress-dot"></div>
+                    <div class="progress-dot"></div>
+                    <div class="progress-dot"></div>
+                    <div class="progress-dot"></div>
+                    <div class="progress-dot"></div>
+                    <div class="progress-dot"></div>
+                    <div class="progress-dot"></div>
+                    <div class="progress-dot"></div>
+                </div>
+
+                <!-- Setup Buttons -->
                 <div class="setup-buttons" id="setupButtons">
                     <button class="setup-button secondary" onclick="prevStep()">
                         <i class="fas fa-arrow-left"></i> Back
@@ -2764,23 +3025,10 @@
                         Continue <i class="fas fa-arrow-right"></i>
                     </button>
                 </div>
-
-                <div class="setup-progress">
-                    <div class="progress-dot active"></div>
-                    <div class="progress-dot"></div>
-                    <div class="progress-dot"></div>
-                    <div class="progress-dot"></div>
-                    <div class="progress-dot"></div>
-                    <div class="progress-dot"></div>
-                    <div class="progress-dot"></div>
-                    <div class="progress-dot"></div>
-                    <div class="progress-dot"></div>
-                    <div class="progress-dot"></div>
-                </div>
             </div>
         </div>
     </div>
-    
+
     <div class="modal-overlay" id="modalOverlay">
         <div class="modal">
             <div class="modal-title" id="modalTitle"></div>
@@ -2800,6 +3048,9 @@
                     New Chat
                 </button>
                 <div class="sidebar-actions">
+                    <button class="sidebar-action-btn" id="togglePreferences" title="Preferences">
+                        <i class="fas fa-cog"></i>
+                    </button>
                     <button class="sidebar-action-btn" id="toggleTheme" title="Toggle theme">
                         <i class="fas fa-moon"></i>
                     </button>
@@ -2886,6 +3137,38 @@
         let chats = [];
         let currentReader = null;
         let customAIs = [];
+
+        // Initialize user preferences
+        let userPreferences = {
+            name: '',
+            role: '',
+            experience: '',
+            goals: '',
+            theme: 'dark',
+            interests: [],
+            preferences: [],
+            communicationStyle: [],
+            responsePreferences: [],
+            learningStyle: [],
+            developmentTools: [],
+            saveInfo: true
+        };
+
+        // Try to load saved preferences
+        const savedPrefs = localStorage.getItem('gemi_user_preferences');
+        if (savedPrefs) {
+            const prefs = JSON.parse(savedPrefs);
+            userPreferences = {
+                ...userPreferences,
+                ...prefs,
+                interests: prefs.interests || [],
+                preferences: prefs.preferences || [],
+                communicationStyle: prefs.communicationStyle || [],
+                responsePreferences: prefs.responsePreferences || [],
+                learningStyle: prefs.learningStyle || [],
+                developmentTools: prefs.developmentTools || []
+            };
+        }
 
         // Message limit tracking
         const MESSAGE_LIMIT_PER_DAY = 500;
@@ -2993,6 +3276,7 @@
 
         // Toggle theme
         function toggleTheme() {
+            isDarkTheme = !isDarkTheme;
             document.documentElement.style.setProperty('--background-dark', isDarkTheme ? '#000000' : '#ffffff');
             document.documentElement.style.setProperty('--surface-dark', isDarkTheme ? '#111111' : '#f5f5f5');
             document.documentElement.style.setProperty('--text-primary', isDarkTheme ? '#ffffff' : '#000000');
@@ -4144,27 +4428,17 @@
                 const savedPrefs = localStorage.getItem('gemi_user_preferences');
                 if (savedPrefs) {
                     const prefs = JSON.parse(savedPrefs);
+                    // Ensure all arrays exist with defaults
+                    prefs.interests = prefs.interests || [];
+                    prefs.preferences = prefs.preferences || [];
+                    prefs.communicationStyle = prefs.communicationStyle || [];
+                    prefs.responsePreferences = prefs.responsePreferences || [];
+                    prefs.learningStyle = prefs.learningStyle || [];
+                    prefs.developmentTools = prefs.developmentTools || [];
+                    
                     let customInstructions = DEFAULT_SYSTEM_INSTRUCTIONS;
-                    
-                    // Add communication style preferences
-                    if (prefs.communicationStyle.includes('detailed')) {
-                        customInstructions += '\nProvide detailed and comprehensive explanations.';
-                    }
-                    if (prefs.communicationStyle.includes('concise')) {
-                        customInstructions += '\nFocus on brevity and clarity in responses.';
-                    }
-                    if (prefs.communicationStyle.includes('technical')) {
-                        customInstructions += '\nUse technical terminology and in-depth explanations.';
-                    }
-                    if (prefs.communicationStyle.includes('casual')) {
-                        customInstructions += '\nMaintain a friendly and conversational tone.';
-                    }
-                    
-                    // Add user context
-                    customInstructions += `\n\nUser Context:\nName: ${prefs.name}\nRole: ${prefs.role}\nInterests: ${prefs.interests.join(', ')}`;
-                    
-                    SYSTEM_INSTRUCTIONS = customInstructions;
-                    emptyChat.systemInstructions = customInstructions;
+                    updateSystemInstructions();
+                    emptyChat.systemInstructions = SYSTEM_INSTRUCTIONS;
                 } else {
                     SYSTEM_INSTRUCTIONS = DEFAULT_SYSTEM_INSTRUCTIONS;
                     emptyChat.systemInstructions = DEFAULT_SYSTEM_INSTRUCTIONS;
@@ -4190,22 +4464,19 @@
             
             if (savedPrefs) {
                 const prefs = JSON.parse(savedPrefs);
-                // Add communication style preferences
-                if (prefs.communicationStyle.includes('detailed')) {
-                    systemInstructions += '\nProvide detailed and comprehensive explanations.';
-                }
-                if (prefs.communicationStyle.includes('concise')) {
-                    systemInstructions += '\nFocus on brevity and clarity in responses.';
-                }
-                if (prefs.communicationStyle.includes('technical')) {
-                    systemInstructions += '\nUse technical terminology and in-depth explanations.';
-                }
-                if (prefs.communicationStyle.includes('casual')) {
-                    systemInstructions += '\nMaintain a friendly and conversational tone.';
-                }
+                // Ensure all arrays exist with defaults
+                prefs.interests = prefs.interests || [];
+                prefs.preferences = prefs.preferences || [];
+                prefs.communicationStyle = prefs.communicationStyle || [];
+                prefs.responsePreferences = prefs.responsePreferences || [];
+                prefs.learningStyle = prefs.learningStyle || [];
+                prefs.developmentTools = prefs.developmentTools || [];
                 
-                // Add user context
-                systemInstructions += `\n\nUser Context:\nName: ${prefs.name}\nRole: ${prefs.role}\nInterests: ${prefs.interests.join(', ')}`;
+                // Update userPreferences object
+                userPreferences = { ...prefs };
+                
+                updateSystemInstructions();
+                systemInstructions = SYSTEM_INSTRUCTIONS;
             }
             
             const chat = {
@@ -4379,6 +4650,39 @@
             showNotification(`Chat exported as ${format.toUpperCase()}`);
         }
 
+        function updateSystemInstructions() {
+            const savedPrefs = localStorage.getItem('gemi_user_preferences');
+            let systemInstructions = DEFAULT_SYSTEM_INSTRUCTIONS;
+            
+            if (savedPrefs) {
+                const prefs = JSON.parse(savedPrefs);
+                // Add communication style preferences
+                if (prefs.communicationStyle.includes('detailed')) {
+                    systemInstructions += '\nProvide detailed and comprehensive explanations.';
+                }
+                if (prefs.communicationStyle.includes('concise')) {
+                    systemInstructions += '\nFocus on brevity and clarity in responses.';
+                }
+                if (prefs.communicationStyle.includes('technical')) {
+                    systemInstructions += '\nUse technical terminology and in-depth explanations.';
+                }
+                if (prefs.communicationStyle.includes('casual')) {
+                    systemInstructions += '\nMaintain a friendly and conversational tone.';
+                }
+                if (prefs.communicationStyle.includes('professional')) {
+                    systemInstructions += '\nAdopt a formal and professional tone in responses.';
+                }
+                if (prefs.communicationStyle.includes('educational')) {
+                    systemInstructions += '\nProvide explanations that are informative and educational.';
+                }
+                
+                // Add user context
+                systemInstructions += `\n\nUser Context:\nName: ${prefs.name}\nRole: ${prefs.role}\nExperience: ${prefs.experience}\nGoals: ${prefs.goals}\nInterests: ${prefs.interests.join(', ')}`;
+            }
+
+            SYSTEM_INSTRUCTIONS = systemInstructions;
+        }
+
         // Clear chat with custom modal
         function clearChat() {
             // If this is the only chat, just clear its messages
@@ -4411,9 +4715,15 @@
                                 if (prefs.communicationStyle.includes('casual')) {
                                     systemInstructions += '\nMaintain a friendly and conversational tone.';
                                 }
+                                if (prefs.communicationStyle.includes('professional')) {
+                                    systemInstructions += '\nAdopt a formal and professional tone in responses.';
+                                }
+                                if (prefs.communicationStyle.includes('educational')) {
+                                    systemInstructions += '\nProvide explanations that are informative and educational.';
+                                }
                                 
                                 // Add user context
-                                systemInstructions += `\n\nUser Context:\nName: ${prefs.name}\nRole: ${prefs.role}\nInterests: ${prefs.interests.join(', ')}`;
+                                systemInstructions += `\n\nUser Context:\nName: ${prefs.name}\nRole: ${prefs.role}\nExperience: ${prefs.experience}\nGoals: ${prefs.goals}\nInterests: ${prefs.interests.join(', ')}`;
                             }
 
                             chats[chatIndex].messages = [];
@@ -4476,9 +4786,15 @@
                                 if (prefs.communicationStyle.includes('casual')) {
                                     systemInstructions += '\nMaintain a friendly and conversational tone.';
                                 }
+                                if (prefs.communicationStyle.includes('professional')) {
+                                    systemInstructions += '\nAdopt a formal and professional tone in responses.';
+                                }
+                                if (prefs.communicationStyle.includes('educational')) {
+                                    systemInstructions += '\nProvide explanations that are informative and educational.';
+                                }
                                 
                                 // Add user context
-                                systemInstructions += `\n\nUser Context:\nName: ${prefs.name}\nRole: ${prefs.role}\nInterests: ${prefs.interests.join(', ')}`;
+                                systemInstructions += `\n\nUser Context:\nName: ${prefs.name}\nRole: ${prefs.role}\nExperience: ${prefs.experience}\nGoals: ${prefs.goals}\nInterests: ${prefs.interests.join(', ')}`;
                             }
 
                             const newChat = {
@@ -4509,76 +4825,6 @@
                     }
                 }
             );
-        }
-
-        // Command palette
-        const commands = [
-            { id: 'new_chat', title: 'New Chat', description: 'Start a new conversation', icon: 'plus', shortcut: 'Ctrl+N', action: createNewChat },
-            { id: 'export_md', title: 'Export as Markdown', description: 'Export chat as Markdown file', icon: 'file-alt', shortcut: 'Ctrl+E', action: () => exportChat('markdown') },
-            { id: 'export_json', title: 'Export as JSON', description: 'Export chat as JSON file', icon: 'file-code', shortcut: 'Ctrl+J', action: () => exportChat('json') },
-            { id: 'clear_chat', title: 'Clear Chat', description: 'Clear current conversation', icon: 'trash', shortcut: 'Ctrl+Del', action: clearChat },
-            { id: 'toggle_theme', title: 'Toggle Theme', description: 'Switch between dark and light theme', icon: 'moon', shortcut: 'Ctrl+T', action: toggleTheme },
-            { id: 'toggle_sidebar', title: 'Toggle Sidebar', description: 'Show/hide sidebar', icon: 'bars', shortcut: 'Ctrl+B', action: toggleSidebar },
-        ];
-
-        function showCommandPalette() {
-            const palette = document.getElementById('commandPalette');
-            const input = document.getElementById('commandInput');
-            palette.classList.add('active');
-            input.value = '';
-            input.focus();
-            renderCommands();
-
-            // Add click event listener to document
-            document.addEventListener('click', handleClickOutside);
-        }
-
-        function hideCommandPalette() {
-            const palette = document.getElementById('commandPalette');
-            palette.classList.remove('active');
-            // Remove click event listener from document
-            document.removeEventListener('click', handleClickOutside);
-        }
-
-        // Function to handle clicks outside the command palette
-        function handleClickOutside(event) {
-            const palette = document.getElementById('commandPalette');
-            const openCommandsBtn = document.getElementById('openCommands');
-            
-            // Check if the click is outside both the palette and the open commands button
-            if (!palette.contains(event.target) && !openCommandsBtn.contains(event.target)) {
-                hideCommandPalette();
-            }
-        }
-
-        function renderCommands(filter = '') {
-            const commandList = document.getElementById('commandList');
-            commandList.innerHTML = '';
-            
-            const filteredCommands = commands.filter(cmd => 
-                cmd.title.toLowerCase().includes(filter.toLowerCase()) ||
-                cmd.description.toLowerCase().includes(filter.toLowerCase())
-            );
-
-            filteredCommands.forEach(cmd => {
-                const item = document.createElement('div');
-                item.className = 'command-item';
-                item.innerHTML = `
-                    <div class="command-icon">
-                        <i class="fas fa-${cmd.icon}"></i>
-                    </div>
-                    <div class="command-info">
-                        <div class="command-title">${cmd.title}</div>
-                        <div class="command-description">${cmd.description}</div>
-                    </div>
-                    <div class="command-shortcut">${cmd.shortcut}</div>
-                `;
-                item.onclick = () => {
-                    cmd.action();
-                    hideCommandPalette();
-                };
-                commandList.appendChild(item);
-            });
         }
 
         // Custom modal functions
@@ -5233,7 +5479,7 @@
                 file.type.startsWith('image/')
             );
 
-            if (files.length >0) {
+            if (files.length > 0) {
                 await handleImageFiles(files);
             }
         });
@@ -5243,7 +5489,7 @@
             const items = Array.from(e.clipboardData.items);
             const imageItems = items.filter(item => item.type.startsWith('image/'));
             
-            if (imageItems.length >0) {
+            if (imageItems.length > 0) {
                 e.preventDefault();
                 const files = imageItems.map(item => item.getAsFile());
                 await handleImageFiles(files);
@@ -5302,31 +5548,76 @@
             if (!localStorage.getItem('gemi_visited')) {
                 const splashScreen = document.getElementById('splashScreen');
                 const setupSteps = document.getElementById('setupSteps');
+                const logo = document.querySelector('.splash-logo');
+                const title = document.querySelector('.splash-title');
+                const subtitle = document.querySelector('.splash-subtitle');
                 
-                // Show initial splash for 3 seconds
+                // Initial state
+                setupSteps.style.display = 'none';
+                logo.style.opacity = '0';
+                title.style.opacity = '0';
+                subtitle.style.opacity = '0';
+                
+                // Animation sequence
                 setTimeout(() => {
-                    // Fade out the initial splash content
-                    const splashLogo = document.querySelector('.splash-logo');
-                    const splashTitle = document.querySelector('.splash-title');
-                    const splashSubtitle = document.querySelector('.splash-subtitle');
+                    // Initial glow effect
+                    const glow = document.querySelector('.glow-effect');
+                    glow.style.animation = 'glowPulse 4s ease-in-out infinite';
                     
-                    splashLogo.style.opacity = '0';
-                    splashTitle.style.opacity = '0';
-                    splashSubtitle.style.opacity = '0';
-                    
-                    // Show setup steps after fade out
+                    // Start with subtle particle effect
                     setTimeout(() => {
-                        splashLogo.style.display = 'none';
-                        splashTitle.style.display = 'none';
-                        splashSubtitle.style.display = 'none';
+                        createParticles();
+                        document.querySelector('.splash-particles').style.opacity = '0.3';
+                    }, 1000);
+                    
+                    // Logo animation
+                    setTimeout(() => {
+                        logo.style.animation = 'logoReveal 3s cubic-bezier(0.4, 0, 0.2, 1) forwards';
+                    }, 3000);
+                    
+                    // Reveal title
+                    setTimeout(() => {
+                        title.style.animation = 'titleReveal 2.5s cubic-bezier(0.4, 0, 0.2, 1) forwards';
+                        title.style.opacity = '1';
+                    }, 6000);
+                    
+                    // Reveal subtitle
+                    setTimeout(() => {
+                        subtitle.style.animation = 'subtitleReveal 2s cubic-bezier(0.4, 0, 0.2, 1) forwards';
+                        subtitle.style.opacity = '1';
+                    }, 8500);
+                    
+                    // Transition to setup
+                    setTimeout(() => {
+                        // Fade out particles
+                        const particles = document.querySelector('.splash-particles');
+                        if (particles) {
+                            particles.style.opacity = '0';
+                            setTimeout(() => particles.remove(), 500);
+                        }
+
+                        // Fade out glow
+                        if (glow) {
+                            glow.style.opacity = '0';
+                            setTimeout(() => glow.remove(), 500);
+                        }
+
+                        // Hide logo, title, and subtitle
+                        logo.style.display = 'none';
+                        title.style.display = 'none';
+                        subtitle.style.display = 'none';
                         
-                        setupSteps.style.display = 'flex';
+                        // Show setup after cleaning animations
                         setTimeout(() => {
-                            setupSteps.style.opacity = '1';
-                            updateStep(1);
-                        }, 100);
-                    }, 500);
-                }, 3000);
+                            setupSteps.style.display = 'flex';
+                            setupSteps.style.opacity = '0';
+                            setTimeout(() => {
+                                setupSteps.style.opacity = '1';
+                                updateStep(1);
+                            }, 500);
+                        }, 500);
+                    }, 11000);
+                }, 500);
             } else {
                 // Remove splash screen immediately if not first visit
                 const splashScreen = document.getElementById('splashScreen');
@@ -5356,26 +5647,35 @@
         // Add validation and loading state to the setup buttons
         function nextStep() {
             if (validateStep(currentStep)) {
+                if (currentStep === totalSteps) {
+                    completeSetup();
+                    return;
+                }
+                
                 const currentStepEl = document.querySelector(`.setup-step[data-step="${currentStep}"]`);
                 const nextStepEl = document.querySelector(`.setup-step[data-step="${currentStep + 1}"]`);
                 
                 if (currentStepEl && nextStepEl && currentStep < totalSteps) {
-                    currentStepEl.classList.add('slide-out');
+                    currentStepEl.style.opacity = '0';
+                    currentStepEl.style.transform = 'translateY(-20px)';
                     
                     setTimeout(() => {
                         currentStepEl.style.display = 'none';
-                        currentStepEl.classList.remove('active', 'slide-out');
+                        currentStepEl.classList.remove('active');
                         nextStepEl.style.display = 'block';
-                        nextStepEl.classList.add('active', 'slide-in');
+                        nextStepEl.classList.add('active');
                         
-                        setTimeout(() => {
-                            nextStepEl.classList.remove('slide-in');
-                        }, 500);
+                        // Force reflow
+                        nextStepEl.offsetHeight;
+                        
+                        nextStepEl.style.opacity = '1';
+                        nextStepEl.style.transform = 'translateY(0)';
                         
                         currentStep++;
                         updateProgress();
+                        updateButtons();
                         validateStep(currentStep);
-                    }, 500);
+                    }, 300);
                 }
             }
         }
@@ -5386,12 +5686,12 @@
             button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Setting up...';
             button.disabled = true;
 
-            // Save user preferences
+            // Save user preferences if selected
             if (userPreferences.saveInfo) {
                 localStorage.setItem('gemi_user_preferences', JSON.stringify(userPreferences));
             }
             
-            // Update system instructions based on preferences
+            // Always update system instructions with basic user info, regardless of save preference
             updateSystemInstructions();
             
             // Complete setup with a loading animation
@@ -5449,22 +5749,26 @@
                 const prevStepEl = document.querySelector(`.setup-step[data-step="${currentStep - 1}"]`);
                 
                 if (currentStepEl && prevStepEl) {
-                    currentStepEl.classList.add('slide-out');
+                    currentStepEl.style.opacity = '0';
+                    currentStepEl.style.transform = 'translateY(20px)';
                     
                     setTimeout(() => {
                         currentStepEl.style.display = 'none';
-                        currentStepEl.classList.remove('active', 'slide-out');
+                        currentStepEl.classList.remove('active');
                         prevStepEl.style.display = 'block';
-                        prevStepEl.classList.add('active', 'slide-in');
+                        prevStepEl.classList.add('active');
                         
-                        setTimeout(() => {
-                            prevStepEl.classList.remove('slide-in');
-                        }, 500);
+                        // Force reflow
+                        prevStepEl.offsetHeight;
+                        
+                        prevStepEl.style.opacity = '1';
+                        prevStepEl.style.transform = 'translateY(0)';
                         
                         currentStep--;
                         updateProgress();
+                        updateButtons();
                         validateStep(currentStep);
-                    }, 500);
+                    }, 300);
                 }
             }
         }
@@ -5502,7 +5806,7 @@
         const setupTransitionStyles = document.createElement('style');
         setupTransitionStyles.textContent = `
             .splash-logo, .splash-title, .splash-subtitle {
-                transition: opacity 0.5s ease;
+                transition: transform 0.5s ease, opacity 0.5s ease;
             }
             
             .setup-steps {
@@ -5513,67 +5817,102 @@
             .setup-step {
                 display: none;
                 opacity: 0;
-                transition: opacity 0.3s ease;
+                transform: translateY(20px);
+                transition: opacity 0.5s ease, transform 0.5s ease;
             }
             
             .setup-step.active {
                 display: block;
                 opacity: 1;
+                transform: translateY(0);
+            }
+
+            .setup-step.slide-out {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            .setup-step.slide-in {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            .step-content-card {
+                transform: translateY(0);
+                transition: transform 0.5s ease, opacity 0.5s ease;
+            }
+
+            .setup-step.active .step-content-card {
+                animation: cardAppear 0.5s ease forwards;
+            }
+
+            @keyframes cardAppear {
+                from {
+                    opacity: 0;
+                    transform: translateY(20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            .progress-dot {
+                transition: background 0.3s ease, transform 0.3s ease;
+            }
+
+            .progress-dot.active {
+                transform: scale(1.2);
             }
         `;
         document.head.appendChild(setupTransitionStyles);
 
-        let userPreferences = {
-            name: '',
-            role: '',
-            experience: '',
-            goals: '',
-            theme: 'dark',
-            enableAnimations: true,
-            interests: [],
-            preferences: [],
-            communicationStyle: [],
-            responsePreferences: [],
-            learningStyle: [],
-            developmentTools: [],
-            saveInfo: false
-        };
-
         function togglePreference(element) {
-            element.classList.toggle('selected');
-            const value = element.getAttribute('data-value');
             const step = element.closest('.setup-step').getAttribute('data-step');
-            let category;
+            const value = element.getAttribute('data-value');
             
-            switch(step) {
-                case '5':
-                    category = 'interests';
-                    break;
-                case '6':
-                    category = 'preferences';
-                    break;
-                case '7':
-                    category = 'communicationStyle';
-                    break;
-                case '8':
-                    category = 'responsePreferences';
-                    break;
-                case '9':
-                    category = 'learningStyle';
-                    break;
-                case '10':
-                    category = 'developmentTools';
-                    break;
-                default:
-                    return;
-            }
-            
-            if (element.classList.contains('selected')) {
-                if (!userPreferences[category].includes(value)) {
-                    userPreferences[category].push(value);
-                }
+            // Special handling for communication style (step 7)
+            if (step === '7') {
+                // Deselect all other options first
+                element.closest('.preference-options').querySelectorAll('.preference-option').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                // Select only this option
+                element.classList.add('selected');
+                // Update preferences array with single value
+                userPreferences.communicationStyle = [value];
             } else {
-                userPreferences[category] = userPreferences[category].filter(v => v !== value);
+                // Normal multi-select behavior for other steps
+                element.classList.toggle('selected');
+                let category;
+                
+                switch(step) {
+                    case '5':
+                        category = 'interests';
+                        break;
+                    case '6':
+                        category = 'preferences';
+                        break;
+                    case '8':
+                        category = 'responsePreferences';
+                        break;
+                    case '9':
+                        category = 'learningStyle';
+                        break;
+                    case '10':
+                        category = 'developmentTools';
+                        break;
+                    default:
+                        return;
+                }
+                
+                if (element.classList.contains('selected')) {
+                    if (!userPreferences[category].includes(value)) {
+                        userPreferences[category].push(value);
+                    }
+                } else {
+                    userPreferences[category] = userPreferences[category].filter(v => v !== value);
+                }
             }
             
             validateStep(parseInt(step));
@@ -5667,23 +6006,26 @@
                 const nextStepEl = document.querySelector(`.setup-step[data-step="${currentStep + 1}"]`);
                 
                 if (currentStepEl && nextStepEl && currentStep < totalSteps) {
-                    currentStepEl.classList.add('slide-out');
+                    currentStepEl.style.opacity = '0';
+                    currentStepEl.style.transform = 'translateY(-20px)';
                     
                     setTimeout(() => {
                         currentStepEl.style.display = 'none';
-                        currentStepEl.classList.remove('active', 'slide-out');
+                        currentStepEl.classList.remove('active');
                         nextStepEl.style.display = 'block';
-                        nextStepEl.classList.add('active', 'slide-in');
+                        nextStepEl.classList.add('active');
                         
-                        setTimeout(() => {
-                            nextStepEl.classList.remove('slide-in');
-                        }, 500);
+                        // Force reflow
+                        nextStepEl.offsetHeight;
+                        
+                        nextStepEl.style.opacity = '1';
+                        nextStepEl.style.transform = 'translateY(0)';
                         
                         currentStep++;
                         updateProgress();
                         updateButtons();
                         validateStep(currentStep);
-                    }, 500);
+                    }, 300);
                 }
             }
         }
@@ -5694,22 +6036,26 @@
                 const prevStepEl = document.querySelector(`.setup-step[data-step="${currentStep - 1}"]`);
                 
                 if (currentStepEl && prevStepEl) {
-                    currentStepEl.classList.add('slide-out');
+                    currentStepEl.style.opacity = '0';
+                    currentStepEl.style.transform = 'translateY(20px)';
                     
                     setTimeout(() => {
                         currentStepEl.style.display = 'none';
-                        currentStepEl.classList.remove('active', 'slide-out');
+                        currentStepEl.classList.remove('active');
                         prevStepEl.style.display = 'block';
-                        prevStepEl.classList.add('active', 'slide-in');
+                        prevStepEl.classList.add('active');
                         
-                        setTimeout(() => {
-                            prevStepEl.classList.remove('slide-in');
-                        }, 500);
+                        // Force reflow
+                        prevStepEl.offsetHeight;
+                        
+                        prevStepEl.style.opacity = '1';
+                        prevStepEl.style.transform = 'translateY(0)';
                         
                         currentStep--;
                         updateProgress();
+                        updateButtons();
                         validateStep(currentStep);
-                    }, 500);
+                    }, 300);
                 }
             }
         }
@@ -5759,7 +6105,7 @@
         responsiveStyles.textContent = `
             @media (max-width: 1200px) {
                 .preference-options {
-                    grid-template-columns: repeat(2, 1fr);
+                    grid-template-columns: repeat(3, 1fr);
                 }
             }
             
@@ -5775,83 +6121,15 @@
         `;
         document.head.appendChild(responsiveStyles);
 
-        function updateSystemInstructions() {
-            let customInstructions = DEFAULT_SYSTEM_INSTRUCTIONS;
-            
-            // Add communication style preferences
-            if (userPreferences.communicationStyle.includes('detailed')) {
-                customInstructions += '\nProvide detailed and comprehensive explanations.';
-            }
-            if (userPreferences.communicationStyle.includes('concise')) {
-                customInstructions += '\nFocus on brevity and clarity in responses.';
-            }
-            if (userPreferences.communicationStyle.includes('technical')) {
-                customInstructions += '\nUse technical terminology and in-depth explanations.';
-            }
-            if (userPreferences.communicationStyle.includes('casual')) {
-                customInstructions += '\nMaintain a friendly and conversational tone.';
-            }
-            if (userPreferences.communicationStyle.includes('professional')) {
-                customInstructions += '\nMaintain a professional and formal tone.';
-            }
-            if (userPreferences.communicationStyle.includes('educational')) {
-                customInstructions += '\nFocus on teaching and explaining concepts clearly.';
-            }
-            
-            // Add response preferences
-            if (userPreferences.responsePreferences.includes('step_by_step')) {
-                customInstructions += '\nBreak down complex explanations into clear steps.';
-            }
-            if (userPreferences.responsePreferences.includes('examples')) {
-                customInstructions += '\nInclude practical examples in explanations.';
-            }
-            if (userPreferences.responsePreferences.includes('analogies')) {
-                customInstructions += '\nUse analogies to explain complex concepts.';
-            }
-            if (userPreferences.responsePreferences.includes('best_practices')) {
-                customInstructions += '\nHighlight industry best practices and standards.';
-            }
-            if (userPreferences.responsePreferences.includes('alternatives')) {
-                customInstructions += '\nProvide alternative approaches when relevant.';
-            }
-            
-            // Add learning style preferences
-            if (userPreferences.learningStyle.includes('visual')) {
-                customInstructions += '\nUse visual explanations when possible.';
-            }
-            if (userPreferences.learningStyle.includes('practical')) {
-                customInstructions += '\nFocus on practical, hands-on examples.';
-            }
-            if (userPreferences.learningStyle.includes('theoretical')) {
-                customInstructions += '\nInclude theoretical background and concepts.';
-            }
-            if (userPreferences.learningStyle.includes('interactive')) {
-                customInstructions += '\nEncourage interactive learning and experimentation.';
-            }
-            
-            // Add comprehensive user context
-            customInstructions += `\n\nUser Context:
-Name: ${userPreferences.name}
-Role: ${userPreferences.role}
-Experience Level: ${userPreferences.experience}
-Goals: ${userPreferences.goals}
-Interests: ${userPreferences.interests.join(', ')}
-Use Cases: ${userPreferences.preferences.join(', ')}
-Communication Style: ${userPreferences.communicationStyle.join(', ')}
-Response Preferences: ${userPreferences.responsePreferences.join(', ')}
-Learning Style: ${userPreferences.learningStyle.join(', ')}
-Development Tools: ${userPreferences.developmentTools.join(', ')}`;
-            
-            SYSTEM_INSTRUCTIONS = customInstructions;
-        }
+
 
         function selectTheme(theme, element) {
             document.querySelectorAll('.theme-option').forEach(opt => opt.classList.remove('selected'));
             element.classList.add('selected');
             userPreferences.theme = theme;
             
-            // Apply theme immediately
-            isDarkTheme = theme === 'dark';  // Set isDarkTheme directly based on selection
+            // Apply theme immediately - fix the logic to match sidebar toggle
+            isDarkTheme = theme !== 'dark';  // Invert the logic to match the toggle behavior
             toggleTheme();
         }
 
@@ -5860,6 +6138,182 @@ Development Tools: ${userPreferences.developmentTools.join(', ')}`;
                 dot.classList.toggle('active', index < currentStep);
             });
         }
+
+        // Add preferences button click handler
+        document.getElementById('togglePreferences').onclick = showPreferences;
+
+        function showPreferences() {
+            // Load current preferences
+            const savedPrefs = localStorage.getItem('gemi_user_preferences');
+            const currentPrefs = savedPrefs ? JSON.parse(savedPrefs) : {
+                name: '',
+                role: '',
+                experience: '',
+                goals: '',
+                theme: isDarkTheme ? 'dark' : 'light',
+                interests: [],
+                preferences: [],
+                communicationStyle: [],
+                responsePreferences: [],
+                learningStyle: [],
+                developmentTools: [],
+                saveInfo: false
+            };
+
+            const modalContent = `
+                <div class="custom-ai-modal">
+                    <div>
+                        <label>Name</label>
+                        <input type="text" id="prefName" value="${currentPrefs.name || ''}" placeholder="Your name">
+                    </div>
+                    <div>
+                        <label>Role</label>
+                        <input type="text" id="prefRole" value="${currentPrefs.role || ''}" placeholder="e.g., Developer, Student">
+                    </div>
+                    <div>
+                        <label>Experience Level</label>
+                        <input type="text" id="prefExperience" value="${currentPrefs.experience || ''}" placeholder="e.g., Beginner, Intermediate">
+                    </div>
+                    <div>
+                        <label>Goals</label>
+                        <input type="text" id="prefGoals" value="${currentPrefs.goals || ''}" placeholder="What do you want to achieve?">
+                    </div>
+                    <div>
+                        <label>Communication Style</label>
+                        <div class="preference-options">
+                            ${['detailed', 'concise', 'technical', 'casual', 'professional', 'educational'].map(style => `
+                                <div class="preference-option ${currentPrefs.communicationStyle?.includes(style) ? 'selected' : ''}" 
+                                     onclick="togglePreferenceInModal(this)" 
+                                     data-value="${style}">
+                                    <i class="fas fa-${getIconForStyle(style)}"></i>
+                                    <span>${style.charAt(0).toUpperCase() + style.slice(1)}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    <div class="modal-checkbox">
+                        <label>
+                            <input type="checkbox" id="prefSaveInfo" ${currentPrefs.saveInfo ? 'checked' : ''}>
+                            Save preferences for future sessions
+                        </label>
+                    </div>
+                </div>
+            `;
+
+            showModal(
+                'Preferences',
+                modalContent,
+                'Save',
+                'Cancel',
+                () => {
+                    const newPrefs = {
+                        name: document.getElementById('prefName').value.trim(),
+                        role: document.getElementById('prefRole').value.trim(),
+                        experience: document.getElementById('prefExperience').value.trim(),
+                        goals: document.getElementById('prefGoals').value.trim(),
+                        theme: isDarkTheme ? 'dark' : 'light',
+                        communicationStyle: Array.from(document.querySelectorAll('.preference-option.selected')).map(el => el.dataset.value),
+                        // Add missing arrays with default empty values
+                        interests: currentPrefs.interests || [],
+                        preferences: currentPrefs.preferences || [],
+                        responsePreferences: currentPrefs.responsePreferences || [],
+                        learningStyle: currentPrefs.learningStyle || [],
+                        developmentTools: currentPrefs.developmentTools || [],
+                        saveInfo: document.getElementById('prefSaveInfo').checked
+                    };
+
+                    // Update userPreferences object
+                    userPreferences = { ...newPrefs };
+                    
+                    // Save preferences
+                    localStorage.setItem('gemi_user_preferences', JSON.stringify(newPrefs));
+                    
+                    // Update system instructions for current chat
+                    updateSystemInstructions();
+                    
+                    showNotification('Preferences saved');
+                }
+            );
+        }
+
+        function getIconForStyle(style) {
+            const icons = {
+                detailed: 'list',
+                concise: 'compress-alt',
+                technical: 'microchip',
+                casual: 'smile',
+                professional: 'briefcase',
+                educational: 'chalkboard-teacher'
+            };
+            return icons[style] || 'check';
+        }
+
+        function togglePreferenceInModal(element) {
+            element.classList.toggle('selected');
+        }
+
+        // Add styles for preferences modal
+        const prefStyles = document.createElement('style');
+        prefStyles.textContent = `
+            .modal-checkbox {
+                margin-top: 1rem;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .modal-checkbox input[type="checkbox"] {
+                width: auto;
+                margin-right: 0.5rem;
+            }
+
+            .custom-ai-modal > div {
+                margin-bottom: 1rem;
+            }
+
+            .custom-ai-modal label {
+                display: block;
+                margin-bottom: 0.5rem;
+                color: var(--text-primary);
+            }
+
+            .custom-ai-modal input[type="text"] {
+                width: 100%;
+                padding: 0.5rem;
+                border-radius: 6px;
+                background: rgba(255, 255, 255, 0.1);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                color: var(--text-primary);
+            }
+
+            .preference-options {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 0.5rem;
+                margin-top: 0.5rem;
+            }
+
+            .preference-option {
+                padding: 0.5rem;
+                border-radius: 6px;
+                background: rgba(255, 255, 255, 0.1);
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                transition: all 0.2s ease;
+            }
+
+            .preference-option:hover {
+                background: rgba(255, 255, 255, 0.15);
+            }
+
+            .preference-option.selected {
+                background: var(--google-gradient);
+                color: white;
+            }
+        `;
+        document.head.appendChild(prefStyles);
     </script>
 </body>
 </html>
