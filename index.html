@@ -2996,7 +2996,7 @@
                         <div class="step-icon"><i class="fas fa-check-circle"></i></div>
                         <div class="step-title">Almost Done!</div>
                         <div class="step-description">
-                            Your preferences will be saved for future sessions automatically. This means that every time you return, the system will remember your choices and tailor the experience to better suit your needs. You can always revisit and modify these preferences at any time to ensure that your interactions remain relevant and personalized. Thank you for taking the time to set up your preferences!
+                            Your preferences will be saved for future sessions automatically.
                         </div>
                     </div>
                 </div>
@@ -4677,7 +4677,7 @@
                 }
                 
                 // Add user context
-                systemInstructions += `\n\nUser Context:\nName: ${prefs.name}\nRole: ${prefs.role}\nExperience: ${prefs.experience}\nGoals: ${prefs.goals}\nInterests: ${prefs.interests.join(', ')}`;
+                systemInstructions += `\n\nInformation about the user:\nName: ${prefs.name}\nRole: ${prefs.role}\nExperience: ${prefs.experience}\nGoals: ${prefs.goals}\nInterests: ${prefs.interests.join(', ')}`;
             }
 
             SYSTEM_INSTRUCTIONS = systemInstructions;
@@ -4723,7 +4723,7 @@
                                 }
                                 
                                 // Add user context
-                                systemInstructions += `\n\nUser Context:\nName: ${prefs.name}\nRole: ${prefs.role}\nExperience: ${prefs.experience}\nGoals: ${prefs.goals}\nInterests: ${prefs.interests.join(', ')}`;
+                                systemInstructions += `\n\nInformation about the user:\nName: ${prefs.name}\nRole: ${prefs.role}\nExperience: ${prefs.experience}\nGoals: ${prefs.goals}\nInterests: ${prefs.interests.join(', ')}`;
                             }
 
                             chats[chatIndex].messages = [];
@@ -4794,7 +4794,7 @@
                                 }
                                 
                                 // Add user context
-                                systemInstructions += `\n\nUser Context:\nName: ${prefs.name}\nRole: ${prefs.role}\nExperience: ${prefs.experience}\nGoals: ${prefs.goals}\nInterests: ${prefs.interests.join(', ')}`;
+                                systemInstructions += `\n\nInformation about the user:\nName: ${prefs.name}\nRole: ${prefs.role}\nExperience: ${prefs.experience}\nGoals: ${prefs.goals}\nInterests: ${prefs.interests.join(', ')}`;
                             }
 
                             const newChat = {
@@ -6314,6 +6314,11 @@
             }
         `;
         document.head.appendChild(prefStyles);
+
+    if (window.innerWidth <= 768) {
+        toggleSidebar();
+    }
+
     </script>
 </body>
 </html>
