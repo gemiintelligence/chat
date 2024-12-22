@@ -1883,9 +1883,11 @@
 
         .setup-buttons {
             display: flex;
-            justify-content: space-between;
-            margin-top: 2rem;
+            justify-content: center;
             gap: 1rem;
+            margin-top: 3rem;
+            position: relative;
+            width: 100%;
         }
 
         .setup-button {
@@ -1898,6 +1900,10 @@
             align-items: center;
             gap: 0.5rem;
             transition: all 0.3s ease;
+            min-width: 120px;
+            justify-content: center;
+            position: relative;
+            z-index: 1;
         }
 
         .setup-button.primary {
@@ -2515,6 +2521,81 @@
                 grid-column: span 1;
             }
         }
+
+        .validation-message {
+            color: #db4437;
+            font-size: 0.875rem;
+            margin: 0.5rem auto;  /* Center horizontally */
+            text-align: center;
+            animation: fadeIn 0.3s ease;
+            width: 100%;  /* Take full width */
+            position: absolute;  /* Position above buttons */
+            left: 50%;
+            transform: translateX(-50%);
+            top: -2rem;  /* Move above buttons */
+            pointer-events: none;  /* Prevent interference with buttons */
+        }
+
+        .setup-buttons {
+            display: flex;
+            justify-content: center;  /* Center the button group */
+            gap: 1rem;
+            margin-top: 3rem;  /* Increased margin to accommodate validation message */
+            position: relative;  /* For absolute positioning of validation message */
+            width: 100%;  /* Ensure full width for proper centering */
+        }
+
+        .setup-button {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            min-width: 120px;  /* Ensure consistent button width */
+            justify-content: center;  /* Center button content */
+            position: relative;  /* Ensure proper stacking context */
+            z-index: 1;  /* Place buttons above validation message */
+        }
+
+        /* Add styles for validation message animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -10px);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, 0);
+            }
+        }
+
+        .validation-message {
+            position: absolute;
+            top: -2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #db4437;
+            font-size: 0.875rem;
+            text-align: center;
+            animation: fadeIn 0.3s ease;
+            width: 100%;
+            pointer-events: none;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -10px);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, 0);
+            }
+        }
     </style>
 
         <script>
@@ -2712,11 +2793,13 @@
                         <div class="setup-input-group">
                             <div class="setup-input-wrapper">
                                 <label class="setup-input-label" for="userName" style="text-align: center;">Your Name</label>
-                                <input type="text" id="userName" class="setup-input" placeholder="Enter your name">
+                                <input type="text" id="userName" class="setup-input" placeholder="Enter your name" maxlength="15" oninput="validateSetupInput(this, 15)">
+                                <div class="input-limit">0/15 characters</div>
                             </div>
                             <div class="setup-input-wrapper">
                                 <label class="setup-input-label" for="userRole" style="text-align: center;">Your Role</label>
-                                <input type="text" id="userRole" class="setup-input" placeholder="e.g., Developer, Student, Designer">
+                                <input type="text" id="userRole" class="setup-input" placeholder="e.g., Developer, Student, Designer" maxlength="25" oninput="validateSetupInput(this, 25)">
+                                <div class="input-limit">0/25 characters</div>
                             </div>
                         </div>
                     </div>
@@ -2733,11 +2816,13 @@
                         <div class="setup-input-group">
                             <div class="setup-input-wrapper">
                                 <label class="setup-input-label" for="userExperience" style="text-align: center;">Experience Level</label>
-                                <input type="text" id="userExperience" class="setup-input" placeholder="e.g., Beginner, Intermediate, Advanced">
+                                <input type="text" id="userExperience" class="setup-input" placeholder="e.g., Beginner, Intermediate, Advanced" maxlength="20" oninput="validateSetupInput(this, 20)">
+                                <div class="input-limit">0/20 characters</div>
                             </div>
                             <div class="setup-input-wrapper">
                                 <label class="setup-input-label" for="userGoals" style="text-align: center;">Learning Goals</label>
-                                <input type="text" id="userGoals" class="setup-input" placeholder="What do you want to achieve?">
+                                <input type="text" id="userGoals" class="setup-input" placeholder="What do you want to achieve?" maxlength="50" oninput="validateSetupInput(this, 50)">
+                                <div class="input-limit">0/50 characters</div>
                             </div>
                         </div>
                     </div>
@@ -3003,7 +3088,6 @@
 
                 <!-- Setup Progress -->
                 <div class="setup-progress">
-                    <div class="progress-dot"></div>
                     <div class="progress-dot"></div>
                     <div class="progress-dot"></div>
                     <div class="progress-dot"></div>
@@ -4079,27 +4163,12 @@
                 }
                 displayChatHistory();
             } catch (error) {
-                console.error('Error:', error);
-                chatHistory.push({
-                    id: `msg_${++messageCounter}`,
-                    role: "model",
-                    parts: [{ text: "I apologize, but I encountered an error. Please try again." }],
-                    timestamp: new Date().toISOString()
-                });
-                displayChatHistory();
+                console.error('Error generating content:', error);
+                showNotification('An error occurred while generating content');
             } finally {
-                currentReader = null;
                 updateGeneratingState(false);
+                apiIndicator.remove();
             }
-        }
-
-        function fileToBase64(file) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = () => resolve(reader.result.split(',')[1]);
-                reader.onerror = error => reject(error);
-            });
         }
 
         // Remove the old image input handler and use only the unified one
@@ -4252,6 +4321,42 @@
                 { 
                     display: "Build an AI Chatbot",
                     text: "Create an AI chatbot using Python and the OpenAI API. Include features like context management, conversation history, prompt templates, and response streaming. Add rate limiting, error handling, and a simple web interface. Include environment variable management and deployment instructions."
+                },
+                { 
+                    display: "Create a Mobile App",
+                    text: "Develop a mobile application using React Native. Include features like user authentication, push notifications, and offline support. Ensure the app is responsive and works on both iOS and Android devices. Add integration with third-party APIs for enhanced functionality."
+                },
+                { 
+                    display: "Implement a Chatbot with NLP",
+                    text: "Create a chatbot using natural language processing (NLP) techniques. Use libraries like NLTK or spaCy to understand user queries. Include features like intent recognition, entity extraction, and response generation. Add a web interface for user interaction."
+                },
+                { 
+                    display: "Create a Web Scraper",
+                    text: "Build a web scraper using Python and BeautifulSoup. Include functionality to extract data from websites, handle pagination, and store results in a CSV file. Add error handling for common issues like connection errors and data formatting."
+                },
+                { 
+                    display: "Develop a Personal Finance Tracker",
+                    text: "Create a personal finance tracking application using JavaScript. Include features like expense tracking, budget setting, and financial goal tracking. Add data visualization for spending habits and savings progress."
+                },
+                { 
+                    display: "Build a Blogging Platform",
+                    text: "Create a blogging platform using Django. Include user authentication, post creation, commenting system, and tagging. Add features for post editing, deletion, and a rich text editor for formatting."
+                },
+                { 
+                    display: "Create a Fitness Tracker",
+                    text: "Develop a fitness tracking application that allows users to log workouts, track progress, and set fitness goals. Include features like exercise suggestions, progress charts, and social sharing options."
+                },
+                { 
+                    display: "Build a Recipe App",
+                    text: "Create a recipe application that allows users to search for, save, and share recipes. Include features like ingredient substitution suggestions, meal planning, and nutritional information."
+                },
+                { 
+                    display: "Create a Music Player",
+                    text: "Develop a music player application using HTML5 and JavaScript. Include features like playlist management, song search, and audio visualization. Add support for various audio formats and a user-friendly interface."
+                },
+                { 
+                    display: "Build a Quiz Application",
+                    text: "Create a quiz application that allows users to take quizzes on various topics. Include features like timed quizzes, score tracking, and user-generated content. Add a leaderboard for competitive play."
                 }
             ],
             learning: [
@@ -4286,6 +4391,30 @@
                 { 
                     display: "Master Regular Expressions",
                     text: "Teach me regular expressions from basic to advanced. Cover pattern matching, quantifiers, groups, lookaheads/lookbehinds, and flags. Include practical examples for validation, parsing, and text manipulation. Provide exercises and common regex patterns."
+                },
+                { 
+                    display: "Understand Data Structures",
+                    text: "Explain fundamental data structures like arrays, linked lists, stacks, queues, trees, and graphs. Discuss their use cases, advantages, and disadvantages. Provide examples in different programming languages."
+                },
+                { 
+                    display: "Learn about APIs",
+                    text: "Teach me about APIs (Application Programming Interfaces). Explain REST vs GraphQL, how to consume APIs, and best practices for designing APIs. Include examples of popular APIs and how to use them."
+                },
+                { 
+                    display: "Master Frontend Frameworks",
+                    text: "Guide me through popular frontend frameworks like React, Angular, and Vue.js. Discuss their features, use cases, and how to choose the right framework for a project. Provide examples and resources for further learning."
+                },
+                { 
+                    display: "Explore Cloud Computing",
+                    text: "Explain the basics of cloud computing, including IaaS, PaaS, and SaaS. Discuss the benefits of cloud services, deployment models, and popular cloud providers. Include examples of cloud-based applications."
+                },
+                { 
+                    display: "Learn Cybersecurity Basics",
+                    text: "Teach me the fundamentals of cybersecurity. Cover topics like encryption, firewalls, intrusion detection systems, and secure coding practices. Provide examples of common vulnerabilities and how to mitigate them."
+                },
+                { 
+                    display: "Understand Agile Methodologies",
+                    text: "Explain Agile methodologies and their principles. Discuss frameworks like Scrum and Kanban, roles within Agile teams, and how to implement Agile practices in software development."
                 }
             ],
             projects: [
@@ -4320,6 +4449,38 @@
                 { 
                     display: "Kanban Board",
                     text: "Create a Kanban board application like Trello with drag-and-drop functionality, real-time updates, and team collaboration features. Include task assignments, due dates, labels, attachments, and activity tracking."
+                },
+                { 
+                    display: "Create a Virtual Reality Experience",
+                    text: "Develop a virtual reality experience using WebVR. Include interactive elements, 3D models, and immersive environments. Ensure compatibility with various VR headsets and provide a user-friendly interface."
+                },
+                { 
+                    display: "Build a News Aggregator",
+                    text: "Create a news aggregator application that pulls articles from various sources. Include features like category filtering, bookmarking, and a search function. Add a clean and responsive design for easy reading."
+                },
+                { 
+                    display: "Develop a Travel Planner",
+                    text: "Create a travel planning application that helps users organize trips. Include features like itinerary creation, budget tracking, and destination recommendations. Add integration with maps and local attractions."
+                },
+                { 
+                    display: "Create a Language Learning App",
+                    text: "Develop a language learning application that offers lessons, quizzes, and progress tracking. Include features like speech recognition, flashcards, and community challenges for user engagement."
+                },
+                { 
+                    display: "Build a Fitness Challenge App",
+                    text: "Create a fitness challenge application that allows users to join challenges, track their progress, and compete with friends. Include features like leaderboards, workout logging, and social sharing."
+                },
+                { 
+                    display: "Develop a Personal Blog",
+                    text: "Create a personal blogging platform where users can write and share their thoughts. Include features like post categorization, comment sections, and social media sharing options."
+                },
+                { 
+                    display: "Create a Video Streaming Service",
+                    text: "Build a video streaming platform that allows users to upload, share, and watch videos. Include features like user subscriptions, playlists, and video recommendations based on viewing history."
+                },
+                { 
+                    display: "Build a Task Management Tool",
+                    text: "Create a task management application that helps users organize their tasks and projects. Include features like deadlines, reminders, and collaboration tools for team projects."
                 }
             ],
             problemSolving: [
@@ -4354,6 +4515,34 @@
                 { 
                     display: "Optimize Docker Setup",
                     text: "Help improve my Docker development and production setup. Need guidance on optimizing container builds, reducing image sizes, improving compose configuration, and implementing proper networking and volume management."
+                },
+                { 
+                    display: "Resolve Performance Bottlenecks",
+                    text: "Help identify and resolve performance bottlenecks in my application. Analyze slow functions, optimize database queries, and improve load times. Provide recommendations for performance monitoring tools."
+                },
+                { 
+                    display: "Fix Cross-Browser Compatibility Issues",
+                    text: "Help me address cross-browser compatibility issues in my web application. Identify problems in different browsers, provide solutions, and ensure a consistent user experience across all platforms."
+                },
+                { 
+                    display: "Improve Code Maintainability",
+                    text: "Help me enhance the maintainability of my codebase. Provide guidance on code organization, documentation practices, and refactoring techniques. Discuss strategies for long-term code health."
+                },
+                { 
+                    display: "Debug API Integration Issues",
+                    text: "Assist in debugging issues with API integrations. Identify common problems, provide solutions, and ensure smooth communication between my application and external APIs."
+                },
+                { 
+                    display: "Enhance User Experience",
+                    text: "Help improve the user experience of my application. Analyze user feedback, suggest UI/UX improvements, and implement best practices for user-centered design."
+                },
+                { 
+                    display: "Implement Continuous Integration",
+                    text: "Guide me in setting up continuous integration for my projects. Discuss tools, best practices, and how to automate testing and deployment processes."
+                },
+                { 
+                    display: "Conduct Code Reviews",
+                    text: "Help me establish a code review process for my team. Discuss best practices, tools, and how to provide constructive feedback to improve code quality."
                 }
             ]
         };
@@ -5542,6 +5731,7 @@
         // Add splash screen logic at the start of the script
         function showIntro() {
             if (!localStorage.getItem('gemi_visited')) {
+                // First time user - show full intro
                 const splashScreen = document.getElementById('splashScreen');
                 const setupSteps = document.getElementById('setupSteps');
                 const logo = document.querySelector('.splash-logo');
@@ -5614,10 +5804,12 @@
                         }, 500);
                     }, 11000);
                 }, 500);
+
+                // Set visited flag after setup is complete
+                localStorage.setItem('gemi_visited', 'true');
             } else {
-                // Remove splash screen immediately if not first visit
-                const splashScreen = document.getElementById('splashScreen');
-                splashScreen.remove();
+                // Returning user - show welcome back animation
+                showWelcomeBack();
             }
         }
 
@@ -5915,17 +6107,38 @@
         }
 
         function validateStep(step) {
-            let isValid = true;
-            const continueButton = document.querySelector('#setupButtons .setup-button.primary');
-
-            switch(parseInt(step)) {
+            clearValidationMessage();
+            
+            switch(step) {
                 case 1:
-                    isValid = true;  // First step is always valid
-                    break;
+                    const nameInput = document.querySelector('#setup-name');
+                    if (!nameInput.value.trim()) {
+                        showValidationMessage('Please enter your name');
+                        return false;
+                    }
+                    if (nameInput.value.length > 15) {
+                        showValidationMessage('Name cannot exceed 15 characters');
+                        return false;
+                    }
+                    return true;
                 case 2:
                     const name = document.getElementById('userName').value.trim();
                     const role = document.getElementById('userRole').value.trim();
-                    isValid = name && role;
+                    isValid = name && role && 
+                             name.length <= 15 && 
+                             role.length <= 25 &&
+                             name.length >= 2 && 
+                             role.length >= 2;
+                    
+                    // Update character count displays
+                    if (document.getElementById('userName')) {
+                        const nameLimit = document.getElementById('userName').parentElement.querySelector('.input-limit');
+                        if (nameLimit) nameLimit.textContent = `${name.length}/15 characters`;
+                    }
+                    if (document.getElementById('userRole')) {
+                        const roleLimit = document.getElementById('userRole').parentElement.querySelector('.input-limit');
+                        if (roleLimit) roleLimit.textContent = `${role.length}/25 characters`;
+                    }
                     
                     if (isValid) {
                         userPreferences.name = name;
@@ -5935,7 +6148,21 @@
                 case 3:
                     const experience = document.getElementById('userExperience').value.trim();
                     const goals = document.getElementById('userGoals').value.trim();
-                    isValid = experience && goals;
+                    isValid = experience && goals &&
+                             experience.length <= 20 &&
+                             goals.length <= 50 &&
+                             experience.length >= 2 &&
+                             goals.length >= 5;
+                    
+                    // Update character count displays
+                    if (document.getElementById('userExperience')) {
+                        const expLimit = document.getElementById('userExperience').parentElement.querySelector('.input-limit');
+                        if (expLimit) expLimit.textContent = `${experience.length}/20 characters`;
+                    }
+                    if (document.getElementById('userGoals')) {
+                        const goalsLimit = document.getElementById('userGoals').parentElement.querySelector('.input-limit');
+                        if (goalsLimit) goalsLimit.textContent = `${goals.length}/50 characters`;
+                    }
                     
                     if (isValid) {
                         userPreferences.experience = experience;
@@ -5943,36 +6170,128 @@
                     }
                     break;
                 case 4:
-                    isValid = true;  // Theme selection is always valid
+                    // Theme selection is always valid as there's a default
+                    isValid = true;
                     break;
                 case 5:
-                    isValid = userPreferences.interests.length > 0;
+                    // Interests - require at least one selection
+                    const selectedInterests = document.querySelectorAll('.setup-step[data-step="5"] .preference-option.selected');
+                    isValid = selectedInterests.length > 0;
                     break;
                 case 6:
-                    isValid = userPreferences.preferences.length > 0;
+                    // Primary use cases - require at least one selection
+                    const selectedUseCases = document.querySelectorAll('.setup-step[data-step="6"] .preference-option.selected');
+                    isValid = selectedUseCases.length > 0;
                     break;
                 case 7:
-                    isValid = userPreferences.communicationStyle.length > 0;
+                    // Communication style - require exactly one selection
+                    const selectedCommStyles = document.querySelectorAll('.setup-step[data-step="7"] .preference-option.selected');
+                    isValid = selectedCommStyles.length === 1;
                     break;
                 case 8:
-                    isValid = userPreferences.responsePreferences.length > 0;
+                    // Response preferences - require at least one selection
+                    const selectedResponsePrefs = document.querySelectorAll('.setup-step[data-step="8"] .preference-option.selected');
+                    isValid = selectedResponsePrefs.length > 0;
                     break;
                 case 9:
-                    isValid = userPreferences.learningStyle.length > 0;
+                    // Text generation preferences - require at least one selection
+                    const selectedTextGenPrefs = document.querySelectorAll('.setup-step[data-step="9"] .preference-option.selected');
+                    isValid = selectedTextGenPrefs.length > 0;
                     break;
                 case 10:
-                    isValid = userPreferences.developmentTools.length > 0;
+                    // Development tools - require at least one selection
+                    const selectedDevTools = document.querySelectorAll('.setup-step[data-step="10"] .preference-option.selected');
+                    isValid = selectedDevTools.length > 0;
                     break;
                 case 11:
-                    isValid = true;  // Final step is always valid
+                    // Final confirmation step is always valid
+                    isValid = true;
                     break;
             }
 
+            // Update continue button state
             if (continueButton) {
                 continueButton.disabled = !isValid;
+                
+                // Add visual feedback for invalid state
+                if (!isValid) {
+                    continueButton.classList.add('invalid');
+                    
+                    // Show validation message if not already present
+                    let validationMsg = document.querySelector('.validation-message');
+                    if (!validationMsg) {
+                        validationMsg = document.createElement('div');
+                        validationMsg.className = 'validation-message';
+                        continueButton.parentElement.appendChild(validationMsg);
+                    }
+                    
+                    // Set appropriate validation message
+                    switch(parseInt(step)) {
+                        case 2:
+                            validationMsg.textContent = 'Please enter your name (2-15 characters) and role (2-25 characters)';
+                            break;
+                        case 3:
+                            validationMsg.textContent = 'Please enter your experience (2-20 characters) and goals (5-50 characters)';
+                            break;
+                        case 5:
+                            validationMsg.textContent = 'Please select at least one interest';
+                            break;
+                        case 6:
+                            validationMsg.textContent = 'Please select at least one use case';
+                            break;
+                        case 7:
+                            validationMsg.textContent = 'Please select exactly one communication style';
+                            break;
+                        case 8:
+                            validationMsg.textContent = 'Please select at least one response preference';
+                            break;
+                        case 9:
+                            validationMsg.textContent = 'Please select at least one text generation preference';
+                            break;
+                        case 10:
+                            validationMsg.textContent = 'Please select at least one development tool';
+                            break;
+                    }
+                } else {
+                    continueButton.classList.remove('invalid');
+                    // Remove validation message if present
+                    const validationMsg = document.querySelector('.validation-message');
+                    if (validationMsg) {
+                        validationMsg.remove();
+                    }
+                }
             }
             return isValid;
         }
+
+        // Add styles for validation feedback
+        const validationFeedbackStyles = document.createElement('style');
+        validationFeedbackStyles.textContent = `
+            .validation-message {
+                color: #db4437;
+                font-size: 0.875rem;
+                margin-top: 0.5rem;
+                text-align: center;
+                animation: fadeIn 0.3s ease;
+            }
+
+            .setup-button.invalid {
+                border-color: #db4437;
+                animation: shake 0.5s ease;
+            }
+
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                25% { transform: translateX(-5px); }
+                75% { transform: translateX(5px); }
+            }
+
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(-5px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+        `;
+        document.head.appendChild(validationFeedbackStyles);
 
         // Add input event listeners for real-time validation
         document.addEventListener('DOMContentLoaded', () => {
@@ -6020,7 +6339,15 @@
                         currentStep++;
                         updateProgress();
                         updateButtons();
-                        validateStep(currentStep);
+                        
+                        // Immediate validation for steps with text fields
+                        if (currentStep === 2 || currentStep === 3) {
+                            setTimeout(() => {
+                                validateStep(currentStep);
+                            }, 100); // Small delay to ensure auto-fill has completed
+                        } else {
+                            validateStep(currentStep);
+                        }
                     }, 300);
                 }
             }
@@ -6050,7 +6377,15 @@
                         currentStep--;
                         updateProgress();
                         updateButtons();
-                        validateStep(currentStep);
+                        
+                        // Immediate validation for steps with text fields
+                        if (currentStep === 2 || currentStep === 3) {
+                            setTimeout(() => {
+                                validateStep(currentStep);
+                            }, 100); // Small delay to ensure auto-fill has completed
+                        } else {
+                            validateStep(currentStep);
+                        }
                     }, 300);
                 }
             }
@@ -6314,6 +6649,518 @@
     if (window.innerWidth <= 768) {
         toggleSidebar();
     }
+
+        function showWelcomeBack() {
+            const splashScreen = document.getElementById('splashScreen');
+            const setupSteps = document.getElementById('setupSteps');
+            const logo = document.querySelector('.splash-logo');
+            const title = document.querySelector('.splash-title');
+            const subtitle = document.querySelector('.splash-subtitle');
+            
+            // Get user preferences for personalization
+            const savedPrefs = localStorage.getItem('gemi_user_preferences');
+            const userName = savedPrefs ? JSON.parse(savedPrefs).name || 'User' : 'User';
+            
+            // Create dynamic background elements
+            const bgContainer = document.createElement('div');
+            bgContainer.className = 'welcome-back-bg';
+            
+            // Create squiggly lines
+            for (let i = 0; i < 8; i++) {
+                const line = document.createElement('div');
+                line.className = 'squiggly-line';
+                line.style.setProperty('--start-x', `${Math.random() * 100}%`);
+                line.style.setProperty('--end-x', `${Math.random() * 100}%`);
+                line.style.setProperty('--delay', `${i * 0.4}s`);
+                line.style.animationDelay = `${i * 0.4}s`;
+                bgContainer.appendChild(line);
+            }
+
+            // Create animated lines
+            for (let i = 0; i < 5; i++) {
+                const line = document.createElement('div');
+                line.className = 'animated-line';
+                line.style.setProperty('--delay', `${i * 0.3}s`);
+                line.style.setProperty('--angle', `${i * 72}deg`);
+                bgContainer.appendChild(line);
+            }
+            
+            // Create floating circles
+            for (let i = 0; i < 8; i++) {
+                const circle = document.createElement('div');
+                circle.className = 'floating-circle';
+                circle.style.setProperty('--delay', `${i * 0.4}s`);
+                circle.style.setProperty('--size', `${10 + Math.random() * 20}px`);
+                bgContainer.appendChild(circle);
+            }
+            
+            // Add enhanced glow effects
+            const enhancedGlow = document.createElement('div');
+            enhancedGlow.className = 'enhanced-glow';
+            bgContainer.appendChild(enhancedGlow);
+            
+            // Insert background container
+            splashScreen.insertBefore(bgContainer, splashScreen.firstChild);
+            
+            // Update content for returning user
+            title.textContent = `Welcome Back, ${userName}!`;
+            subtitle.textContent = 'Ready to continue our journey?';
+            
+            // Initial state
+            setupSteps.style.display = 'none';
+            logo.style.opacity = '0';
+            title.style.opacity = '0';
+            subtitle.style.opacity = '0';
+            
+            // Add new styles dynamically
+            const newStyles = document.createElement('style');
+            newStyles.textContent = `
+                .welcome-back-bg {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    overflow: hidden;
+                    z-index: 0;
+                }
+                
+                .animated-line {
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    width: 150px;
+                    height: 2px;
+                    background: linear-gradient(90deg, transparent, var(--google-blue), transparent);
+                    transform-origin: left center;
+                    animation: rotateLine 8s linear infinite;
+                    animation-delay: var(--delay);
+                    opacity: 0.5;
+                    filter: blur(1px);
+                }
+                
+                @keyframes rotateLine {
+                    0% {
+                        transform: rotate(var(--angle)) translateX(-50%) scaleX(0);
+                        opacity: 0;
+                    }
+                    20% {
+                        transform: rotate(var(--angle)) translateX(-25%) scaleX(1);
+                        opacity: 0.5;
+                    }
+                    80% {
+                        transform: rotate(var(--angle)) translateX(25%) scaleX(1);
+                        opacity: 0.5;
+                    }
+                    100% {
+                        transform: rotate(var(--angle)) translateX(50%) scaleX(0);
+                        opacity: 0;
+                    }
+                }
+                
+                .floating-circle {
+                    position: absolute;
+                    width: var(--size);
+                    height: var(--size);
+                    background: radial-gradient(circle, var(--google-blue) 0%, transparent 70%);
+                    border-radius: 50%;
+                    animation: floatCircle 6s ease-in-out infinite;
+                    animation-delay: var(--delay);
+                    opacity: 0.3;
+                }
+                
+                @keyframes floatCircle {
+                    0% {
+                        transform: translate(
+                            calc(${Math.random() * 100}vw - 50%),
+                            calc(${Math.random() * 100}vh - 50%)
+                        ) scale(0);
+                        opacity: 0;
+                    }
+                    50% {
+                        opacity: 0.3;
+                        transform: translate(
+                            calc(${Math.random() * 100}vw - 50%),
+                            calc(${Math.random() * 100}vh - 50%)
+                        ) scale(1);
+                    }
+                    100% {
+                        transform: translate(
+                            calc(${Math.random() * 100}vw - 50%),
+                            calc(${Math.random() * 100}vh - 50%)
+                        ) scale(0);
+                        opacity: 0;
+                    }
+                }
+                
+                .enhanced-glow {
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    width: 200px;
+                    height: 200px;
+                    background: radial-gradient(circle, var(--google-blue) 0%, transparent 70%);
+                    animation: pulseGlow 4s ease-in-out infinite;
+                    opacity: 0.2;
+                    filter: blur(20px);
+                }
+                
+                @keyframes pulseGlow {
+                    0%, 100% {
+                        transform: translate(-50%, -50%) scale(1);
+                        opacity: 0.2;
+                    }
+                    50% {
+                        transform: translate(-50%, -50%) scale(1.5);
+                        opacity: 0.3;
+                    }
+                }
+            `;
+            document.head.appendChild(newStyles);
+            
+            // Enhanced animation sequence for returning users
+            setTimeout(() => {
+                // Initial glow effect
+                const glow = document.querySelector('.glow-effect');
+                glow.style.animation = 'glowPulse 2s ease-in-out';
+                
+                // Quick particle effect
+                createParticles();
+                document.querySelector('.splash-particles').style.opacity = '0.3';
+                
+                // Logo animation
+                logo.style.animation = 'logoReveal 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards';
+                
+                // Reveal title and subtitle quickly
+                setTimeout(() => {
+                    title.style.animation = 'titleReveal 1s cubic-bezier(0.4, 0, 0.2, 1) forwards';
+                    title.style.opacity = '1';
+                    
+                    setTimeout(() => {
+                        subtitle.style.animation = 'subtitleReveal 1s cubic-bezier(0.4, 0, 0.2, 1) forwards';
+                        subtitle.style.opacity = '1';
+                        
+                        // Fade out after showing welcome back
+                        setTimeout(() => {
+                            bgContainer.style.opacity = '0';
+                            splashScreen.style.opacity = '0';
+                            setTimeout(() => {
+                                splashScreen.remove();
+                            }, 500);
+                        }, 1500);
+                    }, 200);
+                }, 1000);
+            }, 300);
+        }
+
+        // Add input validation function
+        function validateSetupInput(input, maxLength) {
+            // Remove any non-alphanumeric characters except spaces and common punctuation
+            input.value = input.value.replace(/[^\w\s.,!?-]/g, '');
+            
+            // Trim whitespace
+            input.value = input.value.trim();
+            
+            // Update character count
+            const charCount = input.value.length;
+            const limitDisplay = input.parentElement.querySelector('.input-limit');
+            if (limitDisplay) {
+                limitDisplay.textContent = `${charCount}/${maxLength} characters`;
+                
+                // Add warning class if near limit
+                if (charCount >= maxLength - 3) {
+                    limitDisplay.classList.add('near-limit');
+                } else {
+                    limitDisplay.classList.remove('near-limit');
+                }
+            }
+            
+            // Validate current step
+            validateStep(currentStep);
+        }
+
+        // Add styles for input validation
+        const validationStyles = document.createElement('style');
+        validationStyles.textContent = `
+            .input-limit {
+                font-size: 0.75rem;
+                color: rgba(var(--text-primary-rgb), 0.6);
+                text-align: right;
+                margin-top: 0.25rem;
+                transition: color 0.2s ease;
+            }
+
+            .input-limit.near-limit {
+                color: #f4b400;
+            }
+
+            .setup-input {
+                transition: border-color 0.2s ease;
+            }
+
+            .setup-input:invalid {
+                border-color: #db4437 !important;
+            }
+
+            .setup-input-wrapper {
+                position: relative;
+            }
+
+            .setup-input-wrapper .input-limit {
+                position: absolute;
+                right: 0;
+                bottom: -1.25rem;
+            }
+        `;
+        document.head.appendChild(validationStyles);
+
+        // Update validateStep function to include length checks
+        function validateStep(step) {
+            let isValid = true;
+            const continueButton = document.querySelector('#setupButtons .setup-button.primary');
+
+            switch(parseInt(step)) {
+                case 1:
+                    isValid = true;  // First step is always valid - welcome message
+                    break;
+                case 2:
+                    const name = document.getElementById('userName').value.trim();
+                    const role = document.getElementById('userRole').value.trim();
+                    isValid = name && role && 
+                             name.length <= 15 && 
+                             role.length <= 25 &&
+                             name.length >= 2 && 
+                             role.length >= 2;
+                    
+                    // Update character count displays
+                    if (document.getElementById('userName')) {
+                        const nameLimit = document.getElementById('userName').parentElement.querySelector('.input-limit');
+                        if (nameLimit) nameLimit.textContent = `${name.length}/15 characters`;
+                    }
+                    if (document.getElementById('userRole')) {
+                        const roleLimit = document.getElementById('userRole').parentElement.querySelector('.input-limit');
+                        if (roleLimit) roleLimit.textContent = `${role.length}/25 characters`;
+                    }
+                    
+                    if (isValid) {
+                        userPreferences.name = name;
+                        userPreferences.role = role;
+                    }
+                    break;
+                case 3:
+                    const experience = document.getElementById('userExperience').value.trim();
+                    const goals = document.getElementById('userGoals').value.trim();
+                    isValid = experience && goals &&
+                             experience.length <= 20 &&
+                             goals.length <= 50 &&
+                             experience.length >= 2 &&
+                             goals.length >= 5;
+                    
+                    // Update character count displays
+                    if (document.getElementById('userExperience')) {
+                        const expLimit = document.getElementById('userExperience').parentElement.querySelector('.input-limit');
+                        if (expLimit) expLimit.textContent = `${experience.length}/20 characters`;
+                    }
+                    if (document.getElementById('userGoals')) {
+                        const goalsLimit = document.getElementById('userGoals').parentElement.querySelector('.input-limit');
+                        if (goalsLimit) goalsLimit.textContent = `${goals.length}/50 characters`;
+                    }
+                    
+                    if (isValid) {
+                        userPreferences.experience = experience;
+                        userPreferences.goals = goals;
+                    }
+                    break;
+                case 4:
+                    // Theme selection is always valid as there's a default
+                    isValid = true;
+                    break;
+                case 5:
+                    // Interests - require at least one selection
+                    const selectedInterests = document.querySelectorAll('.setup-step[data-step="5"] .preference-option.selected');
+                    isValid = selectedInterests.length > 0;
+                    break;
+                case 6:
+                    // Primary use cases - require at least one selection
+                    const selectedUseCases = document.querySelectorAll('.setup-step[data-step="6"] .preference-option.selected');
+                    isValid = selectedUseCases.length > 0;
+                    break;
+                case 7:
+                    // Communication style - require exactly one selection
+                    const selectedCommStyles = document.querySelectorAll('.setup-step[data-step="7"] .preference-option.selected');
+                    isValid = selectedCommStyles.length === 1;
+                    break;
+                case 8:
+                    // Response preferences - require at least one selection
+                    const selectedResponsePrefs = document.querySelectorAll('.setup-step[data-step="8"] .preference-option.selected');
+                    isValid = selectedResponsePrefs.length > 0;
+                    break;
+                case 9:
+                    // Text generation preferences - require at least one selection
+                    const selectedTextGenPrefs = document.querySelectorAll('.setup-step[data-step="9"] .preference-option.selected');
+                    isValid = selectedTextGenPrefs.length > 0;
+                    break;
+                case 10:
+                    // Development tools - require at least one selection
+                    const selectedDevTools = document.querySelectorAll('.setup-step[data-step="10"] .preference-option.selected');
+                    isValid = selectedDevTools.length > 0;
+                    break;
+                case 11:
+                    // Final confirmation step is always valid
+                    isValid = true;
+                    break;
+            }
+
+            // Update continue button state
+            if (continueButton) {
+                continueButton.disabled = !isValid;
+                
+                // Add visual feedback for invalid state
+                if (!isValid) {
+                    continueButton.classList.add('invalid');
+                    
+                    // Show validation message if not already present
+                    let validationMsg = document.querySelector('.validation-message');
+                    if (!validationMsg) {
+                        validationMsg = document.createElement('div');
+                        validationMsg.className = 'validation-message';
+                        continueButton.parentElement.appendChild(validationMsg);
+                    }
+                    
+                    // Set appropriate validation message
+                    switch(parseInt(step)) {
+                        case 2:
+                            validationMsg.textContent = 'Please enter your name (2-15 characters) and role (2-25 characters)';
+                            break;
+                        case 3:
+                            validationMsg.textContent = 'Please enter your experience (2-20 characters) and goals (5-50 characters)';
+                            break;
+                        case 5:
+                            validationMsg.textContent = 'Please select at least one interest';
+                            break;
+                        case 6:
+                            validationMsg.textContent = 'Please select at least one use case';
+                            break;
+                        case 7:
+                            validationMsg.textContent = 'Please select exactly one communication style';
+                            break;
+                        case 8:
+                            validationMsg.textContent = 'Please select at least one response preference';
+                            break;
+                        case 9:
+                            validationMsg.textContent = 'Please select at least one text generation preference';
+                            break;
+                        case 10:
+                            validationMsg.textContent = 'Please select at least one development tool';
+                            break;
+                    }
+                } else {
+                    continueButton.classList.remove('invalid');
+                    // Remove validation message if present
+                    const validationMsg = document.querySelector('.validation-message');
+                    if (validationMsg) {
+                        validationMsg.remove();
+                    }
+                }
+            }
+            return isValid;
+        }
+
+        // Add step transition observer
+        function nextStep() {
+            if (validateStep(currentStep)) {
+                if (currentStep === totalSteps) {
+                    completeSetup();
+                    return;
+                }
+                
+                const currentStepEl = document.querySelector(`.setup-step[data-step="${currentStep}"]`);
+                const nextStepEl = document.querySelector(`.setup-step[data-step="${currentStep + 1}"]`);
+                
+                if (currentStepEl && nextStepEl && currentStep < totalSteps) {
+                    currentStepEl.style.opacity = '0';
+                    currentStepEl.style.transform = 'translateY(-20px)';
+                    
+                    setTimeout(() => {
+                        currentStepEl.style.display = 'none';
+                        currentStepEl.classList.remove('active');
+                        nextStepEl.style.display = 'block';
+                        nextStepEl.classList.add('active');
+                        
+                        // Force reflow
+                        nextStepEl.offsetHeight;
+                        
+                        nextStepEl.style.opacity = '1';
+                        nextStepEl.style.transform = 'translateY(0)';
+                        
+                        currentStep++;
+                        updateProgress();
+                        updateButtons();
+                        
+                        // Immediate validation for steps with text fields
+                        if (currentStep === 2 || currentStep === 3) {
+                            setTimeout(() => {
+                                validateStep(currentStep);
+                            }, 100); // Small delay to ensure auto-fill has completed
+                        } else {
+                            validateStep(currentStep);
+                        }
+                    }, 300);
+                }
+            }
+        }
+
+        // Add mutation observer to detect auto-fill
+        document.addEventListener('DOMContentLoaded', () => {
+            const setupInputs = document.querySelectorAll('.setup-input');
+            setupInputs.forEach(input => {
+                // Create a mutation observer to watch for auto-fill
+                const observer = new MutationObserver((mutations) => {
+                    mutations.forEach((mutation) => {
+                        if (mutation.target.value) {
+                            validateSetupInput(mutation.target, parseInt(mutation.target.getAttribute('maxlength')));
+                        }
+                    });
+                });
+
+                // Configure the observer to watch for value and attribute changes
+                observer.observe(input, {
+                    attributes: true,
+                    characterData: true,
+                    childList: true,
+                    subtree: true
+                });
+
+                // Also check on input events
+                input.addEventListener('input', () => {
+                    validateSetupInput(input, parseInt(input.getAttribute('maxlength')));
+                });
+
+                // Check immediately for any pre-filled values
+                if (input.value) {
+                    validateSetupInput(input, parseInt(input.getAttribute('maxlength')));
+                }
+            });
+        });
+
+        function showValidationMessage(message) {
+            const validationMessage = document.querySelector('.validation-message') || document.createElement('div');
+            validationMessage.className = 'validation-message';
+            validationMessage.textContent = message;
+            
+            const setupButtons = document.querySelector('.setup-buttons');
+            if (!validationMessage.parentElement) {
+                setupButtons.appendChild(validationMessage);
+            }
+        }
+
+        function clearValidationMessage() {
+            const validationMessage = document.querySelector('.validation-message');
+            if (validationMessage) {
+                validationMessage.remove();
+            }
+        }
 
     </script>
 </body>
