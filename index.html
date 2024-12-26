@@ -3211,7 +3211,30 @@
     <div id="notification" class="notification"></div>
 
     <script>
-        const API_KEY = 'AIzaSyD9w2hg_tfNbHZ5LcnMPpPoQHv8YbSBnvc';
+        // Decoding function for API key
+        function decodeApiKey(encodedKey) {
+            // Fourth layer: Base64 decode
+            let shifted = atob(encodedKey);
+            
+            // Third layer: Reverse shift
+            let unshifted = '';
+            for (let i = 0; i < shifted.length; i++) {
+                unshifted += String.fromCharCode((shifted.charCodeAt(i) - 5 + 256) % 256);
+            }
+        
+            // Second layer: Remove salt
+            let unsalted = unshifted.slice(0, -"GemiIntelligence2024".length);
+        
+            // First layer: Base64 decode
+            return atob(unsalted);
+        }
+
+        // Encoded API key (more secure than plain text)
+        const encodedApiKey = "VlpxO15bUzpXSXE4UnJtc104V3JZck9OXG9bUl43OlNaTUdWZzZLTmlvbV9ecVNIZ3Nfb0xqcm5Oc3lqcXFubGpzaGo3NTc5";
+        
+        // Decode the API key when needed
+        const API_KEY = decodeApiKey(encodedApiKey);
+
         let chatHistory = [];
         let uploadedImages = [];
         let isGenerating = false;
