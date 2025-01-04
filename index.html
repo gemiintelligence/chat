@@ -4095,47 +4095,21 @@
             displayChatHistory();
 
             try {
-                // Create OpenAI-compatible messages format
-                const messages = chatHistory.map(msg => {
-                    // For messages with images, construct content array with text and images
-                    if (msg.parts.some(part => part.inline_data)) {
-                        return {
-                            role: msg.role,
-                            content: msg.parts.map(part => {
-                                if (part.text) {
-                                    return {
-                                        type: "text",
-                                        text: part.text
-                                    };
-                                }
-                                if (part.inline_data) {
-                                    return {
-                                        type: "image_url",
-                                        image_url: {
-                                            url: `data:${part.inline_data.mime_type};base64,${part.inline_data.data}`
-                                        }
-                                    };
-                                }
-                            })
-                        };
-                    }
-                    // For text-only messages, use simple content string
-                    return {
-                        role: msg.role,
-                        content: msg.parts[0].text
-                    };
-                });
+                // Create a clean version of chat history without IDs and timestamps for the API
+                const apiChatHistory = chatHistory.map(({ id, timestamp, ...rest }) => rest);
 
-                const response = await fetch('https://generativelanguage.googleapis.com/v1beta/openai/chat/completions', {
+                const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:streamGenerateContent?alt=sse&key=' + API_KEY, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${API_KEY}`
+                        'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        model: 'gemini-2.0-flash-exp',
-                        messages: messages,
-                        stream: true
+                        system_instruction: { parts: [{ text: SYSTEM_INSTRUCTIONS }] },
+                        contents: apiChatHistory,
+                        generationConfig: {
+                            temperature: 0.4
+                        },
+                        safetySettings: [],
                     })
                 });
 
@@ -4173,8 +4147,13 @@
                         for (const line of lines) {
                             if (line.startsWith('data:')) {
                                 const data = JSON.parse(line.slice(5));
-                                if (data.choices && data.choices[0]?.delta?.content) {
-                                    modelResponse += data.choices[0].delta.content;
+                                if (data.candidates && 
+                                    data.candidates[0] && 
+                                    data.candidates[0].content && 
+                                    data.candidates[0].content.parts && 
+                                    data.candidates[0].content.parts[0] && 
+                                    data.candidates[0].content.parts[0].text) {
+                                    modelResponse += data.candidates[0].content.parts[0].text;
                                     content.innerHTML = marked.parse(modelResponse);
                                     smoothScrollToBottom();
                                 }
