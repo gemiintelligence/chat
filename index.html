@@ -4115,7 +4115,9 @@
                 });
 
                 // Remove API indicator once we get a response
-                apiIndicator.remove();
+                if (apiIndicator && apiIndicator.parentNode) {
+                    apiIndicator.remove();
+                }
 
                 const reader = response.body.getReader();
                 currentReader = reader;
@@ -4197,9 +4199,17 @@
                     uploadedImages = [];
                     updateSendButtonState();
                 }
+                // Make sure to remove API indicator in case of error
+                if (apiIndicator && apiIndicator.parentNode) {
+                    apiIndicator.remove();
+                }
             } finally {
                 updateGeneratingState(false);
                 currentReader = null;
+                // Final cleanup of API indicator if it somehow still exists
+                if (apiIndicator && apiIndicator.parentNode) {
+                    apiIndicator.remove();
+                }
             }
         }
 
