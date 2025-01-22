@@ -4090,6 +4090,7 @@
                 document.getElementById('imagePreview').innerHTML = '';
                 document.getElementById('imageInput').value = '';
                 uploadedImages = [];
+                updateSendButtonState();
             }
             
             displayChatHistory();
@@ -4187,10 +4188,18 @@
                 displayChatHistory();
             } catch (error) {
                 console.error('Error generating content:', error);
-                showNotification('An error occurred while generating content');
+                showNotification('An error occurred while generating content. Please try again.');
+                
+                // Clean up on error
+                if (!isRegeneration) {
+                    document.getElementById('imagePreview').innerHTML = '';
+                    document.getElementById('imageInput').value = '';
+                    uploadedImages = [];
+                    updateSendButtonState();
+                }
             } finally {
                 updateGeneratingState(false);
-                apiIndicator.remove();
+                currentReader = null;
             }
         }
 
